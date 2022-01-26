@@ -1,0 +1,27 @@
+<div class="col-md-12">  
+    <?php
+        $scriptForm = $this->scriptForm;
+
+        $scriptForm->prepare();
+        $scriptForm->setAttribute('id', $scriptForm->getAttribute('id'));
+        
+        echo $this->form()->openTag($scriptForm);
+        echo $this->melisFieldCollection($scriptForm);
+        echo $this->form()->closeTag();
+    ?>            
+
+    <br>
+    <h4 class=""><?php echo $this->translate('tr_meliscmspagescripteditor_page_edition_exception_title')?></h4>
+    <p><?php echo $this->translate('tr_meliscmspagescripteditor_page_edition_exception_desc')?></p>
+
+    <div class="checkbox cb-cont melis-cms-link-check-checkbox">
+       <label class="remember-me-cont">
+            <span class="cbmask-outer">
+                <span  class="cbmask-inner"></span>
+            </span>
+            <input type="hidden" name="excludeSiteScript" value="0" >
+            <input type="checkbox" name="excludeSiteScript" value="1"> <?= $this->translate('tr_meliscmspagescripteditor_exclude_site_script'); ?>                                             
+       </label>
+   </div>
+     
+</div>
