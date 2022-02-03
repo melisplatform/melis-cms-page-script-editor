@@ -45,12 +45,20 @@ return [
         ],
     ],
     'service_manager' => [
+         'aliases' => [
+            // Service
+            'MelisCmsPageScriptEditorService' => \MelisCmsPageScriptEditor\Service\MelisCmsPageScriptEditorService::class,           
+            // Table
+            'MelisCmsScriptTable' => \MelisCmsPageScriptEditor\Model\Tables\MelisCmsScriptTable::class,
+            'MelisCmsScriptExceptionTable' => \MelisCmsPageScriptEditor\Model\Tables\MelisCmsScriptExceptionTable::class
+        ]
 
     ],
     'controllers' => [
         'invokables' => [
             'MelisCmsPageScriptEditor\Controller\List' => \MelisCmsPageScriptEditor\Controller\ListController::class,
             'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEdition'   => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEditionController::class, 
+            'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorToolSiteEdition'   => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorToolSiteEditionController::class, 
         ],
     ],
     'view_manager' => [

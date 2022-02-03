@@ -14,14 +14,36 @@
     <h4 class=""><?php echo $this->translate('tr_meliscmspagescripteditor_page_edition_exception_title')?></h4>
     <p><?php echo $this->translate('tr_meliscmspagescripteditor_page_edition_exception_desc')?></p>
 
-    <div class="checkbox cb-cont melis-cms-link-check-checkbox">
-       <label class="remember-me-cont">
-            <span class="cbmask-outer">
-                <span  class="cbmask-inner"></span>
-            </span>
-            <input type="hidden" name="excludeSiteScript" value="0" >
-            <input type="checkbox" name="excludeSiteScript" value="1"> <?= $this->translate('tr_meliscmspagescripteditor_exclude_site_script'); ?>                                             
-       </label>
-   </div>
+     <?php
+        $exceptionForm = $this->exceptionForm;
+
+        $exceptionForm->prepare();
+        $exceptionForm->setAttribute('id', $exceptionForm->getAttribute('id'));
+        
+        echo $this->form()->openTag($exceptionForm); ?>
+
+  <?php
+    foreach ($exceptionForm->getElements() As $key => $val) {   ?>
+        <div class="form-group"> 
+            <?php 
+                if ($key == 'mcse_exclude_site_scripts') { ?>
+                    <div class="checkbox cb-cont melis-cms-page-script-checkbox">
+                       <label class="remember-me-cont">
+                            <span class="cbmask-outer">
+                                <span  class="cbmask-inner <?=!empty($mcse_exclude_site_scripts) ? 'cb-active' : ''?>"></span>
+                            </span>
+                            <input type="hidden" name="<?=$key?>" value="0" >
+                            <input type="checkbox" name="<?=$key?>" id="<?=$val->getAttribute('id');?>" value="1" <?=!empty($mcse_exclude_site_scripts) ? 'checked' : ''?>> <?=$val->getLabel(); ?>
+                       </label>
+                   </div>
+            <?php    } else if ($key == 'mcse_id') { ?>
+                        <input type="hidden" name="<?=$key?>" id="<?=$key?>" value="<?=$val->getValue()?>" >
+            <?php }
+            ?>
+        </div>
+    <?php } ?>      
+
+    <?php    echo $this->form()->closeTag();
+    ?>    
      
 </div>

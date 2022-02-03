@@ -13,6 +13,9 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
+use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorSavePageListener;
+use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorSaveSiteScriptListener; 
+use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorScriptTagListener;
 
 class Module
 {
@@ -24,7 +27,21 @@ class Module
 
         $this->createTranslations($e);
 
-
+        $sm = $e->getApplication()->getServiceManager();
+        $routeMatch = $sm->get('router')->match($sm->get('request'));
+        if (!empty($routeMatch)) {
+            $routeName = $routeMatch->getMatchedRouteName();
+            $module = explode('/', $routeName);
+                          
+            if (!empty($module[0])) {
+                if ($module[0] == 'melis-backoffice') {
+                    (new MelisCmsPageScriptEditorSavePageListener())->attach($eventManager);
+                    (new MelisCmsPageScriptEditorSaveSiteScriptListener())->attach($eventManager);                    
+                } else {
+                    (new MelisCmsPageScriptEditorScriptTagListener())->attach($eventManager);
+                }
+            }
+        }
     }
 
     public function getConfig()

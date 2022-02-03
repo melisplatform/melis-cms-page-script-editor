@@ -1,0 +1,31 @@
+<?php
+    $id = $this->idPage.'_'.$this->zoneconfig['conf']['id'];
+    $data_melisKey = $this->zoneconfig['conf']['melisKey'];
+?>
+<div class="" id="<?php echo $id ?>" data-melisKey="<?php echo $data_melisKey; ?>">   
+    <div class="pageScriptEditor-result-content open-page-from-lan-tab">
+        <h4 class="pageScriptEditor-title"><?php echo $this->translate('tr_meliscmspagescripteditor_exception_title')?></h4>
+        <p><?php echo $this->translate('tr_meliscmspagescripteditor_exception_desc')?></p>
+
+        <?php 
+            //display table if page has log records
+            //if ($this->logCount) { ?>
+                <div class=''>
+                    <?php echo $this->MelisDataTable()->createTable($this->tableConfig); ?>
+                </div> 
+       <?php  //}
+        ?>   
+
+        <h4 class="pageScriptEditor-title"><?php echo $this->translate('tr_meliscmspagescripteditor_add_exception_title')?></h4>
+        <p><?php echo $this->translate('tr_meliscmspagescripteditor_add_exception_desc')?></p>
+
+        <div class="form-group input-group col-md-8">   
+            <div class="d-flex flex-row justify-content-between">
+                <input class = "form-control" type = "text" id = "tool_site_exception_page_id" name = "tool_site_exception_page_id" value=""><a class="btn btn-default meliscms-site-selector"><i class="fa fa-sitemap"></i></a>
+                <button class="btn btn-success" id="add_tool_site_script_exception_btn">Add</button>
+            </div>            
+        </div> 
+    </div>
+</div>
+
+
