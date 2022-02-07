@@ -11,8 +11,6 @@ namespace MelisCmsPageScriptEditor\Model\Tables;
 
 use MelisCore\Model\Tables\MelisGenericTable;
 use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Predicate\Like;
-use Laminas\Db\Sql\Predicate\PredicateSet;
 use Laminas\Db\TableGateway\TableGateway;
 
 class MelisCmsScriptExceptionTable extends MelisGenericTable
@@ -54,14 +52,9 @@ class MelisCmsScriptExceptionTable extends MelisGenericTable
          $select->join(array('page_published' => 'melis_cms_page_published'), 'page_published.page_id = melis_cms_scripts_exceptions.mcse_page_id', array(), $select::JOIN_LEFT);  
 
         if ($siteId) {   
-            $select->where(array('mcse_site_id' => $siteId ));  
+            $select->where(array('mcse_site_id' => $siteId));  
         } 
-
-        //if sort order is name, set it to page name
-        if ($orderColumn == 'pageName') {
-            $orderColumn = 'page_name';
-        }
-
+    
         if (!is_null($orderColumn)) {            
             $select->order($orderColumn.' '.$order);   
         } else {
@@ -73,7 +66,4 @@ class MelisCmsScriptExceptionTable extends MelisGenericTable
         $resultSet = $this->tableGateway->selectWith($select);        
         return $resultSet;
     }
-
-    
-
 }

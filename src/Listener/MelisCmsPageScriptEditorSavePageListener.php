@@ -12,11 +12,12 @@ namespace MelisCmsPageScriptEditor\Listener;
 use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
-use Laminas\Mvc\MvcEvent;
-use Laminas\Session\Container;
-
 use MelisCore\Listener\MelisGeneralListener;
 
+/**
+ * This listener will update the scripts for the given page
+ * 
+ */
 class MelisCmsPageScriptEditorSavePageListener extends MelisGeneralListener implements ListenerAggregateInterface
 {
 	

@@ -9,8 +9,6 @@
 
 namespace MelisCmsPageScriptEditor\Service;
 use MelisCore\Service\MelisGeneralService;
-use Laminas\Stdlib\ArrayUtils;
-
 
 /**
  * 
@@ -18,9 +16,7 @@ use Laminas\Stdlib\ArrayUtils;
  *
  */
 class MelisCmsPageScriptEditorService extends MelisGeneralService
-{
-                
-    
+{                    
     /**
      * This method will save the script content for the site or page
      * @param int|null $siteId
@@ -112,6 +108,8 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
      /**
      * This method will retrieve the list of pages that exclude the site scripts of the given site id 
      * @param int|null $siteId
+     * @param string|null $sortColumn
+     * @param string|null $sortOrder
      * @return array
      */
     public function getScriptExceptions($siteId = null, $sortColumn = null, $sortOrder = null)
@@ -236,8 +234,8 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
      * Updates the scripts of the given page
      * 
      * @param int $idPage Id of page asked
-     * @param strig $contentGenerated Content to be changed
-     * 
+     * @param string $contentGenerated Content to be changed
+     * @return string
      */
     public function updatePageScripts($idPage, $contentGenerated)
     {

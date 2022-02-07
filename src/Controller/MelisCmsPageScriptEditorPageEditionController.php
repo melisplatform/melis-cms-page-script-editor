@@ -19,7 +19,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
     // The form is loaded from the app.tools array
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_exception_form';
-
+ 
     /* Renders link check tab in Page Edition module
      * @return \Laminas\View\Model\ViewModel
     */    
@@ -59,7 +59,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
             $exceptionForm->bind($pageSiteScriptException);
             $mcse_exclude_site_scripts = 1;          
         }
-        
+       
         $view = new ViewModel();
         $view->idPage = $idPage;        
         $view->scriptForm = $scriptForm;
@@ -95,34 +95,19 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
             if ($scriptForm->isValid()) {
                 // Get datas validated
                 $scriptData = $scriptForm->getData();
-                
-                //if there's at least one script value, proceed with the saving
-                if (!empty($scriptData['mcs_head_top']) || !empty($scriptData['mcs_head_bottom']) || !empty($scriptData['mcs_body_bottom'])) {
 
-                    //set site ID to null
-                    $siteId = null;
+                //use helper to add the scripts to DB
+                $viewHelperManager = $this->getServiceManager()->get('ViewHelperManager');
+                $addScriptHelper = $viewHelperManager->get('melisCmsPageScriptEditorAddScript'); 
 
-                    //get the melis cms page script editor service
-                    $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService');   
-                    $res = $pageScriptEditorService->addScript($siteId, $idPage , $scriptData['mcs_head_top'], $scriptData['mcs_head_bottom'], $scriptData['mcs_body_bottom'], $scriptData['mcs_id']);
-
-                    if (!$res) {
-                        $scriptSuccess = 0;
-                    }
-
-                } else {
-                    if (!empty($scriptData['mcs_id'])) {
-                        // All fields are empty, let's delete the entry
-                        $scriptTable = $this->getServiceManager()->get('MelisCmsScriptTable'); 
-                        $scriptTable->deleteById($scriptData['mcs_id']);
-                    }                   
-                }               
+                //set site ID to null
+                $siteId = null;               
+                $scriptSuccess = $addScriptHelper->addScriptData($this->getServiceManager(), $scriptData, $siteId, $idPage);     
 
             } else {
                 $scriptSuccess = 0;
                 $scriptErrors = array($scriptForm->getMessages());   
             }
-
 
             //process here the exception form
             $exceptionForm = $this->getPageScriptExceptionForm($idPage);

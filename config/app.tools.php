@@ -25,7 +25,8 @@ return [
                         'data' => [                                                                     
                             'columnDefs' => [                                
                                 ['targets' => [0], 'visible' => false],                                                               
-                            ],                       
+                            ],    
+                            'autoWidth' => false                         
                         ],
                         'attributes' => [
                             'id' => '',
@@ -44,23 +45,22 @@ return [
                         'columns' => [    
                             'mcse_id' => [
                                 'text' => 'tr_meliscmspagescripteditor_exception_id',
-                                'css' => array('width' => '10%', 'padding-right' => '0'),
+                                'css' => array('width' => '15%', 'padding-right' => '0'),
                                 'sortable' => false                           
                             ],                       
                             'mcse_page_id' => [
                                 'text' => 'tr_meliscmspagescripteditor_page_id',
-                                'css' => array('width' => '10%', 'padding-right' => '0'),
+                                'css' => array('width' => '15%', 'padding-right' => '0'),
                                 'sortable' => false                           
                             ],
                             'page_name' => [
                                 'text' => 'tr_meliscmspagescripteditor_page_name',
-                                'css' => array('width' => '50%', 'padding-right' => '0'),
+                                'css' => array('width' => '65%', 'padding-right' => '0'),
                                 'sortable' => false                                     
                             ],                                                     
                         ],
                         // define what columns can be used in searching
                         'searchables' => [
-
                         ],
                         'actionButtons' => [
                             'delete_exception' => [
@@ -68,14 +68,13 @@ return [
                                   'controller' => 'MelisCmsPageScriptEditorToolSiteEdition',
                                   'action' => 'render-table-action-delete-exception',
                             ],
-
                         ]
                     ],
-
                 ]
             ],//end tools
 
             'forms' => [
+                //used in the Page Edition and Tool Site's Script Tab
                 'meliscmspagescripteditor_script_form' => [
                     'attributes' => [
                         'name' => 'page-script-editor',
@@ -156,7 +155,7 @@ return [
                                
                             ],
                             'filters'  => [                              
-                                ['name' => 'StringTrim'],
+                                ['name' => 'StringTrim'],                               
                             ],
                         ],                        
                         'mcs_head_bottom' => [
@@ -181,6 +180,7 @@ return [
                     ],
                 ], 
 
+                //used in the Page Edition's Script Tab
                 'meliscmspagescripteditor_script_exception_form' => [
                     'attributes' => [
                         'name' => 'page-script-editor-exception',
@@ -222,8 +222,7 @@ return [
                         'mcse_exclude_site_scripts' => [
                             'name'     => 'mcse_exclude_site_scripts',
                             'required' => false,
-                            'validators' => [    
-                               
+                            'validators' => [                                   
                             ],
                             'filters'  => [      
                                 ['name' => 'StripTags'],                        
@@ -233,6 +232,7 @@ return [
                     ],
                 ], 
 
+                /*for adding/deleting of exception in the tool site*/
                 'meliscmspagescripteditor_tool_site_exception_form' => [
                     'attributes' => [
                         'name' => 'page-script-editor-tool-site-exception',
@@ -245,7 +245,10 @@ return [
                         [
                             'spec' => [
                                 'name' => 'tool_site_mcse_page_id',
-                                'type' => 'hidden',                                
+                                'type' => 'hidden',      
+                                'options' => [
+                                    'label' => 'tr_meliscmspagescripteditor_page_id',
+                                ],                          
                                 'attributes' => [
                                     'id' => 'tool_site_mcse_page_id',
                                     'value' => '',                                   
@@ -253,7 +256,34 @@ return [
                             ],
                         ],                     
                     ],
-                    'input_filter' => [                                
+                    'input_filter' => [
+                        'tool_site_mcse_page_id' => [
+                            'name' => 'tool_site_mcse_page_id',
+                            'required' => true,
+                            'validators' => [
+                                [
+                                    'name' => 'NotEmpty',
+                                    'break_chain_on_failure' => true,
+                                    'options' => [
+                                        'messages' => [
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_meliscmspagescripteditor_err_empty',
+                                        ],
+                                    ],
+                                ],    
+                                [
+                                'name' => 'IsInt',
+                                    'options' => [
+                                        'messages' => [
+                                            \Laminas\I18n\Validator\IsInt::NOT_INT  => 'tr_meliscmspagescripteditor_integer_only'
+                                        ],                                                                       
+                                    ],
+                                ],                                                                  
+                            ],
+                            'filters'  => [      
+                                ['name' => 'StripTags'],                        
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],          
                     ],
                 ], 
             ],//end forms

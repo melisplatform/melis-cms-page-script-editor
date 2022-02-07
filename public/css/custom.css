@@ -1,0 +1,17 @@
+.tool_site_page_exception_error {
+    border: 1px solid red !important;    
+}
+
+.page-script-editor-current-exception, .page-script-editor-add-exception {
+    margin-top: 10px !important;
+    padding: 5px;
+}
+
+.page-script-editor-add-exception #add-page-exception-field {
+    margin-left: 0px;
+    padding: 0px;
+}
+
+.page-script-editor-add-exception #add_tool_site_script_exception_btn {
+    margin-left: 20px;
+}

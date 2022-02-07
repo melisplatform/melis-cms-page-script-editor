@@ -13,6 +13,10 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use MelisCore\Listener\MelisGeneralListener;
 
+/**
+ * This listener will update the scripts of the site
+ * 
+ */
 class MelisCmsPageScriptEditorSaveSiteScriptListener extends MelisGeneralListener implements ListenerAggregateInterface
 {	 
     public function attach(EventManagerInterface $events, $priority = 1)

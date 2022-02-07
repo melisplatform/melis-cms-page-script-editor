@@ -18,7 +18,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     // The form is loaded from the app.tools array
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptToolSiteExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_tool_site_exception_form';
-
+    
     /* Renders the script tab
      * @return \Laminas\View\Model\ViewModel
     */    
@@ -114,29 +114,15 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
             if ($scriptForm->isValid()) {
                 // Get datas validated
                 $scriptData = $scriptForm->getData();
+
+                //use helper to add the scripts to DB
+                $viewHelperManager = $this->getServiceManager()->get('ViewHelperManager');
+                $addScriptHelper = $viewHelperManager->get('melisCmsPageScriptEditorAddScript');      
                 
-                //if there's at least one script value, proceed with the saving
-                if (!empty($scriptData['mcs_head_top']) || !empty($scriptData['mcs_head_bottom']) || !empty($scriptData['mcs_body_bottom'])) {
-
-                    //set page ID to null
-                    $idPage = null;
-
-                    //get the melis cms page script editor service
-                    $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService');   
-                    $res = $pageScriptEditorService->addScript($siteId, $idPage , $scriptData['mcs_head_top'], $scriptData['mcs_head_bottom'], $scriptData['mcs_body_bottom'], $scriptData['mcs_id']);
-
-                    if (!$res) {
-                        $scriptSuccess = 0;
-                    }
-
-                } else {
-                    if (!empty($scriptData['mcs_id'])) {
-                        // All fields are empty, let's delete the entry
-                        $scriptTable = $this->getServiceManager()->get('MelisCmsScriptTable'); 
-                        $scriptTable->deleteById($scriptData['mcs_id']);
-                    }                   
-                }               
-
+                //set page id to null  
+                $pageId = null;        
+                $scriptSuccess = $addScriptHelper->addScriptData($this->getServiceManager(), $scriptData, $siteId, $pageId);
+                           
             } else {
                 $scriptSuccess = 0;
                 $scriptErrors = array($scriptForm->getMessages());   
@@ -229,7 +215,12 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         $siteId = (int) $this->params()->fromQuery('siteId', '');
         $view = new ViewModel();
 
-        if ($siteId) {         
+        if ($siteId) {        
+
+            //get the count of the exceptions of the given site
+            $scriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
+            $exceptionCount = $scriptExceptionTable->getTotalData('mcse_site_id', $siteId);
+
             //get the result table
             $melisTool = $this->getServiceManager()->get('MelisCoreTool');        
             $melisTool->setMelisToolKey('meliscmspagescripteditor', 'meliscmspagescripteditor_site_script_exceptions');//the keys found in app.tools.php    
@@ -238,7 +229,8 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
             $tableId =  $siteId.'MelisCmsPageScriptEditorScriptExceptionsTable';
             $view->siteId = $siteId;                
             $tableConfig['attributes']['id'] =  $tableId;
-            $view->tableConfig = $tableConfig;              
+            $view->tableConfig = $tableConfig;  
+            $view->exceptionCount =  $exceptionCount;           
         }
         
         return $view;    
@@ -287,7 +279,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
         return new JsonModel([  
             'draw' => (int) $draw,         
-            'data' => $resultList           
+            'data' => $resultList                    
         ]);
     }
 
@@ -307,7 +299,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     public function saveSiteScriptExceptionAction()
     {      
         $errors = [];
-        $success = 1;
+        $success = 0;
         $textMessage = "";
         $translator = $this->getServiceManager()->get('translator');
         $textTitle = $translator->translate('tr_meliscmspagescripteditor_tool_site_exception_title');
@@ -318,7 +310,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         if ($request->isPost()) {          
             $postValues = get_object_vars($request->getPost()); 
             $siteId = $postValues['siteId'];
-            $pageIdException = $postValues['tool_site_mcse_page_id'];   
+            $pageId = $postValues['tool_site_mcse_page_id'];   
             $textMessage = $postValues['operation'] == 'add' ? $translator->translate('tr_meliscmspagescripteditor_add_exception_error') : $translator->translate('tr_meliscmspagescripteditor_delete_exception_error');
             
             //process here the exception form
@@ -327,38 +319,101 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
             if ($exceptionForm->isValid()) {
                 $siteScriptExceptionData = $exceptionForm->getData();
+                $scriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
 
-                //insert site's script exception to DB for the given page
                 if ($siteScriptExceptionData['tool_site_mcse_page_id']) {
+                    
+                    if ($postValues['operation'] == 'add') {
 
-                    //delete first the page exception of the site
-                    $scriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
-                    $scriptExceptionTable->deleteByField('mcse_site_id', $siteId);
-                    $res = null;
-            
-                    //add here the updated list of page exceptions              
-                    $explode = explode(',', $siteScriptExceptionData['tool_site_mcse_page_id']);
-                    foreach ($explode as $page) {
-                        //get the melis cms page script editor service
-                        $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
-                        $res = $pageScriptEditorService->addScriptException($siteId, $page);
-                     
-                        if (!$res) {
-                            $success = 0;                                     
-                            break;
+                        //check here if the selected page belongs to current site by getting the site id of the page
+                        //check first the published pages
+                        $melisPage = $this->getServiceManager()->get('MelisEnginePage');
+                        $datasPage = $melisPage->getDatasPage($pageId, 'published'); 
+
+                        if ($datasPage->getMelisTemplate()) {
+                            $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
+                        }            
+
+                        //if page not yet published, check the saved pages
+                        if (empty($pageSiteId)) {                
+                            $datasPage = $melisPage->getDatasPage($pageId,'saved'); 
+
+                            if ($datasPage->getMelisTemplate()) {
+                                $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
+                            }                
+                        }
+
+                        //page is ok if its site id is the same with the selected site id from the site tool
+                        if ($siteId == $pageSiteId) {
+
+                            //check if already existing in DB
+                            $isExisting = $scriptExceptionTable->getEntryByField('mcse_page_id', $pageId)->current();
+                 
+                            if ($isExisting) {                                   
+                                $exceptionForm->get('tool_site_mcse_page_id')->setMessages([
+                                    'Duplicate' => $translator->translate('tr_meliscmspagescripteditor_add_exception_duplicate_error')
+                                ]);        
+                                $errors = $exceptionForm->getMessages(); 
+                            } else {
+                                //add to exception list if not yet existing       
+                                $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
+                                $res = $pageScriptEditorService->addScriptException($siteId, $pageId);
+
+                                if ($res) {
+                                    $success = 1;    
+                                } 
+                            }
+                           
+                        } else {
+                            $exceptionForm->get('tool_site_mcse_page_id')->setMessages([
+                                'Wrong Site' => $translator->translate('tr_meliscmspagescripteditor_add_exception_wrong_site_error')
+                            ]);        
+                            $errors = $exceptionForm->getMessages(); 
                         } 
-                    }  
+
+                    } else {
+                        //delete page from the exception list                      
+                        $res = $scriptExceptionTable->deleteByField('mcse_page_id', $pageId);
+                        
+                        if ($res) {
+                            $success = 1;    
+                        } 
+                    }
 
                     if ($success) {
                         //set success message
                         $textMessage = $postValues['operation'] == 'add' ? $translator->translate('tr_meliscmspagescripteditor_add_exception_success') : $translator->translate('tr_meliscmspagescripteditor_delete_exception_success');
+                    } else {
+                       
+                        //set error message
+                        $textMessage = $postValues['operation'] == 'add' ? $translator->translate('tr_meliscmspagescripteditor_add_exception_error') : $translator->translate('tr_meliscmspagescripteditor_delete_exception_error');                                            
                     }  
                 }            
 
-            } else {
-                $success = 0;               
-                $errors = array($exceptionForm->getMessages());  
+            } else {                       
+                $errors = $exceptionForm->getMessages();  
             } 
+
+
+            if ($errors) {
+                /**
+                 * Get the config for this form
+                 */
+                $melisMelisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
+
+                $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered(
+                    self::PageScriptToolSiteExceptionAppConfigPath,
+                    'meliscmspagescripteditor_tool_site_exception_form',
+                    'tool_site_edition_exception_'.$siteId . '_');
+
+                foreach ($errors as $keyError => $valueError) {
+                    foreach ($appConfigForm['elements'] as $keyForm => $valueForm) {
+                        if ($valueForm['spec']['name'] == $keyError &&
+                            !empty($valueForm['spec']['options']['label']))
+                            $errors[$keyError]['label'] = $valueForm['spec']['options']['label'];
+                    }
+                }
+            }            
     
             $result = array(
                     'success' => $success,
@@ -369,7 +424,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
            
         } else {
             $result = array(
-                    'success' => 0,
+                    'success' => $success,
                     'errors' => array(array('empty' => $translator->translate('tr_meliscms_form_common_errors_Empty datas'))),
                     'textMessage' => $textMessage,
                     'textTitle' => $textTitle
@@ -378,56 +433,4 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
           
         return new JsonModel($result);         
     } 
-    
-
-    /* This will check if the selected page ID from the tree view belongs to the selected site 
-     * @return \Laminas\View\Model\ViewModel
-    */
-    public function checkPageAction()
-    {              
-        // Check if post
-        $request = $this->getRequest();
-        $result = false;
-
-        if ($request->isPost()) {          
-            $postValues = get_object_vars($request->getPost()); 
-            $pageId = $postValues['pageId'];
-            $selectedSiteId = $postValues['siteId'];
-
-            //get the site id of the page, check first the published pages
-            $melisPage = $this->getServiceManager()->get('MelisEnginePage');
-            $datasPage = $melisPage->getDatasPage($pageId, 'published'); 
-
-            if ($datasPage->getMelisTemplate()) {
-                $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
-            }            
-
-            //if page not yet published, //check the saved pages
-            if (empty($pageSiteId)) {                
-                $datasPage = $melisPage->getDatasPage($pageId,'saved'); 
-
-                if ($datasPage->getMelisTemplate()) {
-                    $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
-                }                
-            }
-
-            //page is ok if it's site id is the same with the selected site id
-            if ($selectedSiteId == $pageSiteId) {
-                $result = array(
-                    'pageOk' => 1                     
-                );
-            } else {
-                $translator = $this->getServiceManager()->get('translator');
-                $result = array(
-                    'pageOk' => 0,
-                    'textTitle' => $translator->translate('tr_meliscmspagescripteditor_tool_site_exception_title'),
-                    'textMessage' => $translator->translate('tr_meliscmspagescripteditor_add_exception_page_error')                
-                );
-            }
-        }
-
-        return new JsonModel($result);         
-    }
-
-
 }

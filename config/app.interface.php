@@ -19,7 +19,9 @@ return [
                 'js' => [
                    '/MelisCmsPageScriptEditor/js/tool.js'
                 ],
-                'css' => [],
+                'css' => [
+                    '/MelisCmsPageScriptEditor/css/custom.css'
+                ],
                 /**
                  * the "build" configuration compiles all assets into one file to make
                  * lesser requests
@@ -36,7 +38,8 @@ return [
                     ]
                 ]
             ],
-            'datas' => [],
+            'datas' => [                
+            ],
         ]
     ]
 ];

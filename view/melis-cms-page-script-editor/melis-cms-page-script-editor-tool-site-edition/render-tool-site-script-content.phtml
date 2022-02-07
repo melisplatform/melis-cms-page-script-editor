@@ -21,19 +21,17 @@ if (!empty($this->zoneconfig['conf']['id'])) {
                 <div class="row">
                     <div class="col-md-12">
                         <?php
+                            //render the script form
                             $scriptForm = $this->scriptForm;
-
                             $scriptForm->prepare();
                             $scriptForm->setAttribute('id', $scriptForm->getAttribute('id'));
                             
                             echo $this->form()->openTag($scriptForm);
                             echo $this->melisFieldCollection($scriptForm);
                             echo $this->form()->closeTag();
-                        ?>     
-
-                        <?php
+                            
+                            //render the exception form
                             $scriptExceptionForm = $this->scriptExceptionForm;
-
                             $scriptExceptionForm->prepare();
                             $scriptExceptionForm->setAttribute('id', $scriptExceptionForm->getAttribute('id'));
                             
@@ -41,7 +39,7 @@ if (!empty($this->zoneconfig['conf']['id'])) {
                             echo $this->melisFieldCollection($scriptExceptionForm);
                             echo $this->form()->closeTag();
                         ?>  
-                        
+
                     </div>
                 </div>      
             </div>
@@ -49,13 +47,12 @@ if (!empty($this->zoneconfig['conf']['id'])) {
             <div class="row">
                 <div class="col-md-12">
                      <?php
-                                if (!empty($this->zoneconfig['interface'])) {
-                                    foreach ($this->zoneconfig['interface'] as $keyConfig => $menuConfig) {
-                                        echo $this->$keyConfig;
-                                    }
+                            if (!empty($this->zoneconfig['interface'])) {
+                                foreach ($this->zoneconfig['interface'] as $keyConfig => $menuConfig) {
+                                    echo $this->$keyConfig;
                                 }
-                            ?>
-
+                            }
+                    ?>
                 </div>
             </div> 
 

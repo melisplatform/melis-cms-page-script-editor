@@ -8,8 +8,7 @@
  */
 
 return [
-    'plugins' => [
-        
+    'plugins' => [        
         //page edition script tab
         'meliscmspagescripteditor' => [
             'interface' => [
@@ -19,8 +18,7 @@ return [
                         'id' => 'id_meliscms_page_script_editor',
                         'melisKey' => 'meliscms_page_script_editor',
                         'name' => 'tr_meliscmspagescripteditor_title',
-                        'icon' => 'glyphicons embed_close',
-                        // 'follow_regular_rendering' => false,
+                        'icon' => 'glyphicons embed_close',                       
                     ],
                     'forward' => [
                         'module' => 'MelisCmsPageScriptEditor',
@@ -30,7 +28,7 @@ return [
                         'jsdatas' => []
                     ],
                     'interface' => [
-                        'meliscmspagescripteditor_launch_form' => [
+                        'meliscmspagescripteditor_script_form' => [
                             'conf' => [
                                 'id' => 'id_meliscmspagescripteditor_header',
                                 'melisKey' => 'meliscmspagescripteditor_header',
@@ -46,38 +44,35 @@ return [
                         ],                  
                     ]
                 ],//end meliscmspagescripteditor_page_edition
-
-
-
             ],
         ],
 
         //site tool script tab
-        'meliscmssitetoolscripteditor' =>  [            
+        'meliscmssitetoolscripteditor' => [            
             'interface' => [
-                'meliscms_tool_sites_scripts' =>  [
-                    'conf' =>  [
+                'meliscms_tool_sites_scripts' => [
+                    'conf' => [
                         'id' => 'id_meliscms_tool_sites_scripts',
                         'melisKey' => 'meliscms_tool_sites_scripts',
                         'name' => 'tr_meliscmspagescripteditor_title',
                         'icon' => 'glyphicons embed_close',
                     ],
-                    'forward' =>  [
+                    'forward' => [
                         'module' => 'MelisCmsPageScriptEditor',
                         'controller' => 'MelisCmsPageScriptEditorToolSiteEdition',
                         'action' => 'render-tool-site-scripts',
                         'jscallback' => '',
                         'jsdatas' => array()
                     ],
-                    'interface' =>  [
-                        'meliscms_tool_sites_script_content' =>  [
-                            'conf' =>  [
+                    'interface' => [
+                        'meliscms_tool_sites_script_content' => [
+                            'conf' => [
                                 'id' => 'id_meliscms_tool_sites_script_content',
                                 'melisKey' => 'meliscms_tool_sites_script_content',
                                 'name' => 'tr_melis_cms_sites_tool_content_edit_script_tab_content',
                                 'rightsDisplay' => 'true',
                             ],
-                            'forward' =>  [
+                            'forward' => [
                                 'module' => 'MelisCmsPageScriptEditor',
                                 'controller' => 'MelisCmsPageScriptEditorToolSiteEdition',
                                 'action' => 'render-tool-site-script-content',
@@ -105,7 +100,6 @@ return [
                 ],
             ],
         ],
-
         
         'meliscms' => [       
             'interface' => [
@@ -127,9 +121,9 @@ return [
                 //for the site tool edition
                 'meliscms_toolstree' => [
                     'interface' => [
-                        'meliscms_tool_sites_edit_site' =>  [
+                        'meliscms_tool_sites_edit_site' => [
                             'interface' =>  [
-                                'meliscms_tool_sites_edit_site_tabs' =>  [
+                                'meliscms_tool_sites_edit_site_tabs' => [
                                     'interface' =>  [
                                         'meliscms_tool_sites_edit_site_tabs_script' => [
                                             'conf' => [

@@ -1,31 +1,34 @@
 <?php
-    $id = $this->idPage.'_'.$this->zoneconfig['conf']['id'];
+    $id = $this->siteId.'_'.$this->zoneconfig['conf']['id'];
     $data_melisKey = $this->zoneconfig['conf']['melisKey'];
 ?>
 <div class="" id="<?php echo $id ?>" data-melisKey="<?php echo $data_melisKey; ?>">   
-    <div class="pageScriptEditor-result-content open-page-from-lan-tab">
+    <div class="page-script-editor-current-exception">
         <h4 class="pageScriptEditor-title"><?php echo $this->translate('tr_meliscmspagescripteditor_exception_title')?></h4>
-        <p><?php echo $this->translate('tr_meliscmspagescripteditor_exception_desc')?></p>
+        <p><?=$this->exceptionCount > 0 ?  $this->translate('tr_meliscmspagescripteditor_exception_desc') : $this->translate('tr_meliscmspagescripteditor_tool_site_no_exception_found')?></p> 
 
         <?php 
-            //display table if page has log records
-            //if ($this->logCount) { ?>
+            //display table if site has exceptions
+            if ($this->exceptionCount) { ?>
                 <div class=''>
                     <?php echo $this->MelisDataTable()->createTable($this->tableConfig); ?>
                 </div> 
-       <?php  //}
-        ?>   
+       <?php }
+        ?>  
+    </div>
 
+    <div class="page-script-editor-add-exception">
         <h4 class="pageScriptEditor-title"><?php echo $this->translate('tr_meliscmspagescripteditor_add_exception_title')?></h4>
         <p><?php echo $this->translate('tr_meliscmspagescripteditor_add_exception_desc')?></p>
 
-        <div class="form-group input-group col-md-8">   
+        <div class="form-group input-group col-md-8" id="add-page-exception-field">   
             <div class="d-flex flex-row justify-content-between">
-                <input class = "form-control" type = "text" id = "tool_site_exception_page_id" name = "tool_site_exception_page_id" value=""><a class="btn btn-default meliscms-site-selector"><i class="fa fa-sitemap"></i></a>
+                <input class="form-control" type="text" id="tool_site_exception_page_id" name="tool_site_exception_page_id" value=""><a class="btn btn-default meliscms-site-selector"><i class="fa fa-sitemap"></i></a>
                 <button class="btn btn-success" id="add_tool_site_script_exception_btn">Add</button>
             </div>            
         </div> 
     </div>
 </div>
+
 
 

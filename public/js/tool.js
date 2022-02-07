@@ -3,7 +3,7 @@ $(function(){
     $body = $("body");
    
     /**
-     * Exclude Site Script checkbox
+     * Exclude site script checkbox
      */
     $body.on(
         "click",
@@ -16,103 +16,66 @@ $(function(){
         }
     );   
 
-    //when 'delete exception' button is clicked, remove the page exception entry from the table
-    $body.on('click', '.btnDeletePageException', function (event) {   
-        event.preventDefault();   
-        var scriptDataTable = getDataTable();
-   
-        scriptDataTable.row($(this).parents('tr')).remove();    
-        saveSiteScriptException(scriptDataTable, 'delete');                
+    //when 'delete exception' button is clicked, remove the page exception entry from DB 
+    $body.on('click', '.btnDeletePageException', function (event) {    
+        var pageID = null;
+        var scriptDataTable = getDataTable();      
+        var selectedTrClass = $(this).parents('tr').attr('class');      
+
+        //get the page id
+        if (selectedTrClass == 'child') {    
+            pageID = scriptDataTable.row($(this).closest("tr").prev()[0]).data().mcse_page_id; 
+        } else {
+            pageID = scriptDataTable.row($(this).closest("tr")).data().mcse_page_id; 
+        }
+
+        //if deletion is confirmed, proceed to delete
+        melisCoreTool.confirm(
+            translations.tr_meliscmspagescripteditor_common_label_yes,
+            translations.tr_meliscmspagescripteditor_common_label_no,
+            translations.tr_meliscmspagescripteditor_delete_exception_btn_tooltip,
+            translations.tr_meliscmspagescripteditor_delete_exception_btn_confirm,              
+            function() {  
+                saveSiteScriptException('delete', pageID);
+        });
     }); 
 
     //add page to exception list
-    $body.on('click', '#add_tool_site_script_exception_btn', function (event) {   
-        event.preventDefault();
-        var scriptDataTable = getDataTable();
-
+    $body.on('click', '#add_tool_site_script_exception_btn', function (event) {         
         var pageId = $("#tool_site_exception_page_id").val();
-        var isExisting = 0;
-
-        //check here if the page is already in the exception list
-        var currentExceptionList = scriptDataTable.data().toArray();
-        $.each(currentExceptionList , function(index, val) {              
-            if (pageId == val['mcse_page_id']) {
-                isExisting = 1;
-                return false
-            }
-        });
-
-        if (isExisting == 1) {        
-            melisHelper.melisKoNotification(translations.tr_meliscmspagescripteditor_tool_site_exception_title, translations.tr_meliscmspagescripteditor_add_exception_duplicate_error);  
-        } else {
-           
-            //check if the page id entered belongs to the current site
-            var siteId = activeTabId.split("_")[0];
-            $.ajax({
-                type: 'POST',
-                url: '/melis/MelisCmsPageScriptEditor/MelisCmsPageScriptEditorToolSiteEdition/checkPage',
-                data: {siteId:siteId, pageId:pageId},          
-                dataType: "json",
-                encode: true,
-            }).done(function (data) {
-
-                if (data.pageOk) {  
-
-                    //update data table
-                    scriptDataTable.row.add( {
-                        "mcse_id": 0,
-                        "mcse_page_id": pageId,
-                        "page_name": "",            
-                    } );
-
-                    //calls function to update exception list in DB
-                    saveSiteScriptException(scriptDataTable, 'add'); 
-                } else {
-                    melisHelper.melisKoNotification(data.textTitle, data.textMessage);                
-                }
-
-            }).fail(function () {                    
-                alert(translations.tr_meliscore_error_message);
-            });         
-        }            
+        
+        //calls function to add exception in DB
+        saveSiteScriptException('add', pageId);    
     });
 
-    /*this will add or delete the pages that exclude the site script*/
-    function saveSiteScriptException(scriptDataTable, operation) {       
-        var tableRowDataArr = scriptDataTable.data().toArray();
-        var pages = [];
-
-        //add to array the list of page exceptions
-        $.each(tableRowDataArr , function(index, val) {   
-            pages.push(val['mcse_page_id']);
-        });
-
-        //set page exception to hidden field
-        var implodedPage = pages.join(',');
+    /*this will add or delete the pages that exclude the site scripts*/
+    function saveSiteScriptException(operation, pageID) {           
         var siteId = activeTabId.split("_")[0];
-        $("#"+siteId+"_id_meliscms_tool_sites_script_content").find('input[name="tool_site_mcse_page_id"]').val(implodedPage);  
-      
-        //get page_name first of the selected page id from the site map
+           
         $.ajax({
             type: 'POST',
             url: '/melis/MelisCmsPageScriptEditor/MelisCmsPageScriptEditorToolSiteEdition/saveSiteScriptException',
-            data: {siteId:siteId, operation:operation, tool_site_mcse_page_id:implodedPage},          
+            data: {siteId:siteId, operation:operation, tool_site_mcse_page_id:pageID},          
             dataType: "json",
             encode: true,
         }).done(function (data) {
-
             if (data.success) {
-                melisHelper.melisOkNotification( data.textTitle, data.textMessage );
-                melisHelper.zoneReload("id_MelisCmsSlider_list_content_table", "MelisCmsSlider_list_content_table", {});
-
-                //reload table
-                scriptDataTable.ajax.url('/melis/MelisCmsPageScriptEditor/MelisCmsPageScriptEditorToolSiteEdition/getScriptExceptions').load();
+                melisHelper.melisOkNotification( data.textTitle, data.textMessage);
+                
+                //remove highlight
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").removeClass('tool_site_page_exception_error');
+               
+                // refresh the main list table 
+                melisHelper.zoneReload(siteId+"_id_meliscms_tool_sites_script_exceptions", "meliscms_tool_sites_script_exceptions", {siteId:siteId});   
 
                 //empty input field
-                $("#"+activeTabId.split("_")[0]+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").val("");                 
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").val("");                 
 
             } else {
-                melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);                
+                melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);  
+                
+                //highlight input field           
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").addClass('tool_site_page_exception_error');               
             }
 
         }).fail(function () {                    
@@ -123,11 +86,16 @@ $(function(){
     /*this will retrieve the data table*/
     function getDataTable() {        
         var siteId = activeTabId.split("_")[0];
-        var MelisCmsPageScriptExceptionTable = $("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").DataTable(); 
-        return MelisCmsPageScriptExceptionTable;
+        var MelisCmsPageScriptExceptionTable = null;
+
+        if ($("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").length > 0) {      
+            MelisCmsPageScriptExceptionTable = $("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").DataTable();             
+        }
+
+        return MelisCmsPageScriptExceptionTable;        
     }
 
-    //used in tool site edition scrip tab to set the site id used in getting the script exceptions of the site
+    //used in tool site edition script tab to set the site id used in getting the script exceptions of the site
     window.initSiteId = function (data) {   
         var siteId = activeTabId.split("_")[0];
 

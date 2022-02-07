@@ -15,8 +15,7 @@ use Laminas\Mvc\MvcEvent;
 use MelisCore\Listener\MelisGeneralListener;
 
 /**
- * This listener will activate the replacement of the title and meta description
- * on Melis Pages
+ * This listener will activate the insertion of the scripts on Melis Pages
  * 
  */
 class MelisCmsPageScriptEditorScriptTagListener extends MelisGeneralListener implements ListenerAggregateInterface
@@ -26,8 +25,6 @@ class MelisCmsPageScriptEditorScriptTagListener extends MelisGeneralListener imp
 		$callBackHandler = $events->attach(
 			MvcEvent::EVENT_FINISH, 
 			function(MvcEvent $e){
-
-				dump('inside MelisCmsPageScriptEditorScriptTagListener');
 				
 				// Get route match to know if we are displaying in back or front
 				$routeMatch = $e->getRouteMatch();
