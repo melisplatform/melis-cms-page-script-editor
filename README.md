@@ -49,8 +49,8 @@ In case of problems, SQL files are located here:
 
 ### Scripts Tab in Melis CMS' Page System
 
-- A 'Scripts' tab is added inside Melis CMS' page system where the user can add scripts to be inserted after the opening head tag (<head>), or before the closing head tag (</head>), or before the closing body tag (</body>) of the page when rendered
-- The user can opt to exclude the site's scripts and just include the page's defined scripts in the rendering
+- A 'Scripts' tab is added inside Melis CMS' page system where the user can add scripts to be inserted after the opening head tag, before the closing head tag, or before the closing body tag of the page when rendered
+- The user may opt to exclude the site's scripts and just include the page's defined scripts in the rendering
 
 ### Scripts Tab in Melis CMS' Tool Site
 
@@ -94,21 +94,21 @@ There are three listeners inside the module:
 
 ```
 Files: 
-      - /melis-cms-page-script-editor/src/Listener/MelisCmsPageScriptEditorSavePageListener.php 
-      - /melis-cms-page-script-editor/src/Listener/MelisCmsPageScriptEditorSaveSiteScriptListener.php 
-      - /melis-cms-page-script-editor/src/Listener/MelisCmsPageScriptEditorScriptTagListener.php   
-```    
+      - /melis-cms-page-script-editor/src/Listener/MelisCmsPageScriptEditorSavePageListener.php
+      - /melis-cms-page-script-editor/src/Listener/MelisCmsPageScriptEditorSaveSiteScriptListener.php
+      - /melis-cms-page-script-editor/src/Listener/MelisCmsPageScriptEditorScriptTagListener.php
+```
 
 - MelisCmsPageScriptEditorSavePageListener
-    - This is triggered when the page in Melis Cms' Page Edition is saved or published and will automatically saved the script data and the exception configuration defined for the given page
+    - This is triggered when the page in Melis Cms' Page Edition is saved or published and will automatically save the script data and the exception configuration defined for the given page
 
 - MelisCmsPageScriptEditorSaveSiteScriptListener
-    - This is triggered when the site is saved and will automatically saved the script data and the exception configuration defined for the given site
+    - This is triggered when the site is saved and will automatically save the script data and the exception configuration defined for the given site
 
 - MelisCmsPageScriptEditorScriptTagListener
     - This is triggered when the page is rendered     
     - The scripts for the page will be inserted to its defined destination(after the opening head tag, before the closing head tag or before the closing body tag)
-    - If the page exluded the site's scripts, only the page's scripts will be inserted, else, the scripts will be the combination of the site and page's scripts where the site's scripts always come first
+    - If the page exluded the site's scripts, only the page's scripts will be inserted, else, the scripts will be the combination of the site and page's scripts where the site's scripts will always come first  
        
 * For a more detailed information on the listeners, please visit the files.
 
