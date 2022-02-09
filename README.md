@@ -1,6 +1,6 @@
 # Melis CMS Page Script Editor
 
-This module allows users to add custom scripts and styles at the site and page levels
+This module allows users to add custom scripts and styles at the site and page levels.
 
 
 ## Getting started
@@ -56,7 +56,7 @@ In case of problems, SQL files are located here:
 
 - A 'Scripts' tab is added inside Melis CMS' Tool Site in which the scripts that are set here will be applied to all pages belonging to the site, except for the pages that exclude the site's scripts
 - List of pages that exclude the site's scripts are displayed and the user has the option to remove the page from the exception
-- The user also has the ability to add a page to the exception list
+- The user also has the ability to add a page to the exception list during the rendering process
 
 ### Page Script Editor Service
 
@@ -68,12 +68,13 @@ Files:
 - MelisCmsPageScriptEditorService
     - This service's functions include the retrieval and adding of page or site's scripts.  
      
+    ```
     //Get the service
     $pageScriptEditorService = $this->getServiceManager()->get("MelisCmsPageScriptEditorService");
 
     //Retrieve final scripts of the page
     $resultList = $pageScriptEditorService->getMixedScriptsPerPage($pageId);   
-
+    ```
     - Common methods this service is used for are as follows:
         - Retrieving page script: getScriptsPerPage(...)
         - Retrieving site scripts : getScriptsPerSite(...)
@@ -82,7 +83,7 @@ Files:
         - Saving exception : addScriptException(...)
  
 
-* For a more detailed information on the methods, please visit the files.
+* For a more detailed information on the methods, please visit the file.
 
 ### Listeners
 
