@@ -2,17 +2,14 @@
     $id = $this->siteId.'_'.$this->zoneconfig['conf']['id'];
     $data_melisKey = $this->zoneconfig['conf']['melisKey'];
 ?>
-<div class="" id="<?php echo $id ?>" data-melisKey="<?php echo $data_melisKey; ?>">   
+<div id="<?php echo $id ?>" data-melisKey="<?php echo $data_melisKey; ?>">   
     <div class="page-script-editor-current-exception">
         <h4 class="pageScriptEditor-title"><?php echo $this->translate('tr_meliscmspagescripteditor_exception_title')?></h4>
         <p><?=$this->exceptionCount > 0 ?  $this->translate('tr_meliscmspagescripteditor_exception_desc') : $this->translate('tr_meliscmspagescripteditor_tool_site_no_exception_found')?></p> 
-
         <?php 
             //display table if site has exceptions
-            if ($this->exceptionCount) { ?>
-                <div class=''>
-                    <?php echo $this->MelisDataTable()->createTable($this->tableConfig); ?>
-                </div> 
+            if ($this->exceptionCount) { ?>                
+                <?php echo $this->MelisDataTable()->createTable($this->tableConfig); ?>                
        <?php }
         ?>  
     </div>

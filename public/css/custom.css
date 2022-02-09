@@ -1,4 +1,21 @@
-.tool_site_page_exception_error {
+/*Page Edition Script Tab*/
+.page-edition-script-exception-form {
+    margin-top: 50px !important;
+}
+
+.page-edition-site-script-input-checkbox {
+    float: none !important;
+    margin-right: 0px !important;
+}
+
+.page-edition-site-script-input-checkbox-label {
+    padding-left: 10px !important;
+    padding-top: 2px !important;
+}
+
+
+/*Tool Site Edition Script Tab*/
+.tool-site-page-exception-error {
     border: 1px solid red !important;    
 }
 
@@ -15,3 +32,4 @@
 .page-script-editor-add-exception #add_tool_site_script_exception_btn {
     margin-left: 20px;
 }
+

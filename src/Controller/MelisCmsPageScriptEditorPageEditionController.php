@@ -6,7 +6,6 @@
  * @copyright Copyright (c) 2017 Melis Technology (http://www.melistechnology.com)
  *
  */
-
 namespace MelisCmsPageScriptEditor\Controller;
 
 use Laminas\View\Model\ViewModel;
@@ -49,7 +48,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
             $scriptForm->bind($pageScript);
         }        
 
-        //get here page's site script exception of the page
+        //get here the page's site script exception 
         $scriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
         $pageSiteScriptException = $scriptExceptionTable->getEntryByField('mcse_page_id', $idPage)->current();
         $exceptionForm = $this->getPageScriptExceptionForm($idPage);        
@@ -86,14 +85,12 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
         $request = $this->getRequest();
         if ($request->isPost()) {
             // Get values posted and set them in form
-            $postValues = $request->getPost()->toArray();
-            // Get the form 
+            $postValues = $request->getPost()->toArray();         
             $scriptForm = $this->getPageScriptForm($idPage);
             $scriptForm->setData($postValues);
 
             // Validate the form
-            if ($scriptForm->isValid()) {
-                // Get datas validated
+            if ($scriptForm->isValid()) {               
                 $scriptData = $scriptForm->getData();
 
                 //use helper to add the scripts to DB
@@ -119,7 +116,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
                 //insert site's script exception to DB for the given page
                 if ($siteScriptExceptionData['mcse_exclude_site_scripts']) {
 
-                    //get the site id given the page id
+                    //get the site id given the page template id
                     $pageTplId = $postValues['page_tpl_id'];
                     $tplTable = $this->getServiceManager()->get('MelisEngineTableTemplate');
                     $template = $tplTable->getEntryById($pageTplId)->current();
@@ -170,7 +167,6 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
 
         $this->getEventManager()->trigger('meliscms_page_save_script_end', null, $result);        
         return new JsonModel($result);
-
     } 
 
     /**

@@ -11,7 +11,6 @@ namespace MelisCmsPageScriptEditor\Controller;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use MelisCore\Controller\MelisAbstractActionController;
-use Laminas\Stdlib\ArrayUtils;
 
 class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractActionController
 {
@@ -63,22 +62,6 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         //get tool site exception form
         $scriptExceptionForm = $this->getSiteScriptExceptionForm($siteId);
 
-        //get the pages that exclude the site's scripts and set it to hidden field
-        $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
-        $pagesException = $pageScriptEditorService->getScriptExceptions($siteId, null, null)->toArray();
-
-        if ($pagesException) {
-            $pages = [];
-           
-            foreach ($pagesException as $key => $page) {
-                $pages[] = $page['mcse_page_id'];
-            }
-
-            $pages = implode(',',$pages); 
-            $element = $scriptExceptionForm->get('tool_site_mcse_page_id');                
-            $element->setValue($pages);                                    
-        }
-
         $view = new ViewModel();
         $view->siteId = $siteId;
         $view->scriptForm = $scriptForm;     
@@ -87,7 +70,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     }
     
     /* Saves the script to DB
-     * @return \Laminas\View\Model\ViewModel
+     * @return \Laminas\View\Model\JsonModel
     */
     public function saveSiteScriptAction()
     {              
@@ -145,7 +128,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     } 
 
     /**
-     * Returns the Page Script Form
+     * Returns the Site Script Form
      * @param $siteId    
      * @return \Laminas\Form\ElementInterface
      */
@@ -206,7 +189,6 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         return $scriptExceptionForm;
     }
 
-
     /* Render the script exception table
      * @return \Laminas\View\Model\ViewModel
     */  
@@ -243,6 +225,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
      */
     public function getScriptExceptionsAction()
     {       
+        $draw = 0;
         $resultList = [];
 
         if ($this->getRequest()->isPost()) {      
@@ -294,7 +277,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
 
     /* Saves the site script exception to DB
-     * @return \Laminas\View\Model\ViewModel
+     * @return \Laminas\View\Model\JsonModel
     */
     public function saveSiteScriptExceptionAction()
     {      
@@ -329,6 +312,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                         //check first the published pages
                         $melisPage = $this->getServiceManager()->get('MelisEnginePage');
                         $datasPage = $melisPage->getDatasPage($pageId, 'published'); 
+                        $pageSiteId = 0;
 
                         if ($datasPage->getMelisTemplate()) {
                             $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;

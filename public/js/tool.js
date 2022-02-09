@@ -63,7 +63,7 @@ $(function(){
                 melisHelper.melisOkNotification( data.textTitle, data.textMessage);
                 
                 //remove highlight
-                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").removeClass('tool_site_page_exception_error');
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").removeClass('tool-site-page-exception-error');
                
                 // refresh the main list table 
                 melisHelper.zoneReload(siteId+"_id_meliscms_tool_sites_script_exceptions", "meliscms_tool_sites_script_exceptions", {siteId:siteId});   
@@ -75,7 +75,7 @@ $(function(){
                 melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);  
                 
                 //highlight input field           
-                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").addClass('tool_site_page_exception_error');               
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").addClass('tool-site-page-exception-error');               
             }
 
         }).fail(function () {                    

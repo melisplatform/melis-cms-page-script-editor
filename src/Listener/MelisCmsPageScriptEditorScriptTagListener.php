@@ -15,7 +15,7 @@ use Laminas\Mvc\MvcEvent;
 use MelisCore\Listener\MelisGeneralListener;
 
 /**
- * This listener will activate the insertion of the scripts on Melis Pages
+ * This listener will activate the insertion of the scripts on Melis Pages when rendered
  * 
  */
 class MelisCmsPageScriptEditorScriptTagListener extends MelisGeneralListener implements ListenerAggregateInterface
@@ -47,13 +47,13 @@ class MelisCmsPageScriptEditorScriptTagListener extends MelisGeneralListener imp
 				
 					// Get the response generated
 					$response = $e->getResponse();
-					$content = $response->getContent();
-				
+					$content = $response->getContent();			
 					$params = $routeMatch->getParams();
 					
 					if (empty($params['idpage']))
 						return;
 					
+					//get page id
 					$idpage = $params['idpage'];
 				
 					/**

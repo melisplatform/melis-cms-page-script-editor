@@ -6,7 +6,6 @@
  * @copyright Copyright (c) 2016 Melis Technology (http://www.melistechnology.com)
  *
  */
-
 namespace MelisCmsPageScriptEditor\Service;
 use MelisCore\Service\MelisGeneralService;
 
@@ -25,7 +24,7 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
      * @param String $headBottomScript
      * @param String $bodyBottomScript
      * @param int $mcs_id, the primary key of the mcs_script table
-     * @return null if the saving is failed
+     * @return null if the saving failed
      */
     public function addScript($siteId = null, $pageId = null, $headTopScript = null, $headBottomScript = null, $bodyBottomScript = null, $mcs_id = null)
     { 

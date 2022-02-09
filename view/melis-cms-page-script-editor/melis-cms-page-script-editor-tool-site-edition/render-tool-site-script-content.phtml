@@ -4,8 +4,8 @@ if (!empty($this->zoneconfig['conf']['id'])) {
     $id = ' id="' . $this->siteId . '_' . $this->zoneconfig['conf']['id'] . '"';
     $data_melisKey = $this->zoneconfig['conf']['melisKey'];
 }
-
 ?>
+
 <?php if(!empty($this->siteId)) { ?>
 <div data-melisKey='<?= $data_melisKey; ?>'<?= $id; ?> class="tab-pane widget-body-regular meliscms_center_tabs">
     <div class="widget widget-tabs widget-tabs-double widget-tabs-responsive margin-none border-none">
@@ -39,26 +39,22 @@ if (!empty($this->zoneconfig['conf']['id'])) {
                             echo $this->melisFieldCollection($scriptExceptionForm);
                             echo $this->form()->closeTag();
                         ?>  
-
                     </div>
                 </div>      
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                     <?php
-                            if (!empty($this->zoneconfig['interface'])) {
-                                foreach ($this->zoneconfig['interface'] as $keyConfig => $menuConfig) {
-                                    echo $this->$keyConfig;
-                                }
+                    <?php
+                        if (!empty($this->zoneconfig['interface'])) {
+                            foreach ($this->zoneconfig['interface'] as $keyConfig => $menuConfig) {
+                                echo $this->$keyConfig;
                             }
+                        }
                     ?>
                 </div>
             </div> 
-
-
         </div>
     </div>    
-
 </div>
 <?php } ?>
