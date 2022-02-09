@@ -101,6 +101,9 @@ return [
                                 'options' => [
                                     'label' => 'tr_meliscmspagescripteditor_head_top',
                                     'tooltip' => 'tr_meliscmspagescripteditor_head_top tooltip',
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
+                                    ],
                                 ],
                                 'attributes' => [
                                     'id' => 'mcs_head_top',
@@ -118,6 +121,9 @@ return [
                                 'options' => [
                                     'label' => 'tr_meliscmspagescripteditor_head_bottom',
                                     'tooltip' => 'tr_meliscmspagescripteditor_head_bottom tooltip',
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
+                                    ],
                                 ],
                                 'attributes' => [
                                     'id' => 'mcs_head_bottom',
@@ -135,6 +141,9 @@ return [
                                 'options' => [
                                     'label' => 'tr_meliscmspagescripteditor_body_bottom',
                                     'tooltip' => 'tr_meliscmspagescripteditor_body_bottom tooltip',
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
+                                    ],
                                 ],
                                 'attributes' => [
                                     'id' => 'mcs_body_bottom',
