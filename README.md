@@ -55,8 +55,8 @@ In case of problems, SQL files are located here:
 ### Scripts Tab in Melis CMS' Tool Site
 
 - A 'Scripts' tab is added inside Melis CMS' Tool Site in which the scripts that are set here will be applied to all pages belonging to the site, except for the pages that exclude the site's scripts
-- List of pages that exclude the site's scripts are displayed and the user has the option to remove the page from the exception
-- The user also has the ability to add a page to the exception list during the rendering process
+- List of pages that exclude the site's scripts are displayed and the user has the option to remove the page from the exception list
+- The user also has the ability to add a page to the exception list 
 
 ### Page Script Editor Service
 
@@ -108,7 +108,7 @@ Files:
 - MelisCmsPageScriptEditorScriptTagListener
     - This is triggered when the page is rendered     
     - The scripts for the page will be inserted to its defined destination(after the opening head tag, before the closing head tag or before the closing body tag)
-    - If the page exluded the site's scripts, only the page's scripts will be inserted, else, the scripts will be the combination of the site and page's scripts where the site's scripts will always come first  
+    - If the page exluded the site's scripts, only the page's scripts will be inserted, else, the scripts will be the combination of the site and page's scripts where the site's scripts will always come first during the rendering process
        
 * For a more detailed information on the listeners, please visit the files.
 
