@@ -63,25 +63,24 @@ In case of problems, SQL files are located here:
 ```
 Files: 
       - /melis-cms-page-script-editor/src/Service/MelisCmsPageScriptEditorService.php   
-
+```
 
 - MelisCmsPageScriptEditorService
     - This service's functions include the retrieval and adding of page or site's scripts.  
-      
-    ```     
+     
     //Get the service
     $pageScriptEditorService = $this->getServiceManager()->get("MelisCmsPageScriptEditorService");
 
     //Retrieve final scripts of the page
     $resultList = $pageScriptEditorService->getMixedScriptsPerPage($pageId);   
 
-    ```
     - Common methods this service is used for are as follows:
         - Retrieving page script: getScriptsPerPage(...)
         - Retrieving site scripts : getScriptsPerSite(...)
         - Retrieving site exceptions: getScriptExceptions(...)
         - Saving page or site scripts : addScript(...)
         - Saving exception : addScriptException(...)
+ 
 
 * For a more detailed information on the methods, please visit the files.
 
