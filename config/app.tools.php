@@ -22,7 +22,8 @@ return [
                         'ajaxUrl' => '/melis/MelisCmsPageScriptEditor/MelisCmsPageScriptEditorToolSiteEdition/getScriptExceptions',
                         'dataFunction' => 'initSiteId',
                         'ajaxCallback' => '',
-                        'data' => [                                                                     
+                        'data' => [  
+                            'order' => [[1, 'asc']],                                                                     
                             'columnDefs' => [                                
                                 ['targets' => [0], 'visible' => false],                                                               
                             ],    
