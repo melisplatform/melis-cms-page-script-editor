@@ -1,7 +1,9 @@
 $(function(){
     // Tool scripts
-    $body = $("body");
-   
+    $body = $("body");    
+    var loader = '<div id="loader" class="overlay-loader"><img class="loader-icon spinning-cog" src="/MelisCore/assets/images/cog12.svg" data-cog="cog12"></div>';
+
+
     /**
      * Exclude site script checkbox
      */
@@ -51,6 +53,8 @@ $(function(){
     /*this will add or delete the pages that exclude the site scripts*/
     function saveSiteScriptException(operation, pageID) {           
         var siteId = activeTabId.split("_")[0];
+        
+        $("#"+siteId+"_id_meliscms_tool_sites_script_exceptions").append(loader);
            
         $.ajax({
             type: 'POST',
@@ -59,6 +63,9 @@ $(function(){
             dataType: "json",
             encode: true,
         }).done(function (data) {
+
+            $("#"+siteId+"_id_meliscms_tool_sites_script_exceptions #loader").remove();
+
             if (data.success) {
                 melisHelper.melisOkNotification( data.textTitle, data.textMessage);
                 

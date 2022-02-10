@@ -53,12 +53,11 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
         return $arrayParameters['result'];
     }
 
-
     /**
-     * This method will save the site script exception for the given page
+     * This method will save the page as an exception in using the site's scripts
      * @param int|null $siteId
      * @param int|null $pageId   
-     * @return null if the saving is failed
+     * @return array
      */
     public function addScriptException($siteId = null, $pageId = null)
     { 
@@ -91,7 +90,8 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
      * This will return the current user id that is using the platform  
      * @return int
      */
-    private function getCurrentUserId(){
+    private function getCurrentUserId()
+    {
         //get the current user id          
         $userId = null;
         $melisCoreAuth = $this->getServiceManager()->get('MelisCoreAuth');
@@ -102,7 +102,6 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
 
         return $userId;
     }
-
 
      /**
      * This method will retrieve the list of pages that exclude the site scripts of the given site id 
@@ -124,7 +123,6 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
         return $arrayParameters['result'];
     }
 
-
     /**
      * This method will retrieve the scripts for the given site id
      * @param int|null $siteId
@@ -142,7 +140,6 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
         $arrayParameters = $this->sendEvent('meliscmspagescripteditor_get_site_script_end', $arrayParameters);
         return $arrayParameters['result'];
     }
-
 
     /**
      * This method will retrieve the scripts for the given page id
@@ -197,9 +194,7 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
 
         } else {
             //get the site id of the page
-            $melisPage = $this->getServiceManager()->get('MelisEnginePage');
-            $datasPage = $melisPage->getDatasPage($arrayParameters['pageId'], 'published'); 
-            $siteId = $datasPage->getMelisTemplate()->tpl_site_id;
+            $siteId = $this->getSiteId($arrayParameters['pageId']);
 
             $siteScripts = current($this->getScriptsPerSite($siteId)->toArray());
             $pageScripts = current($this->getScriptsPerPage($pageId)->toArray());
@@ -244,21 +239,54 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
         $scripts = $this->getMixedScriptsPerPage($idPage);               
                 
         if (!empty($scripts['headTopScript'])) {
-            $headRegex = '/(<\s*head\s*>)/';
+            $headRegex = '/(<head\s*>)/';
             $newContent = preg_replace($headRegex, "$1\r\n".$scripts['headTopScript']."\r\n", $newContent, 1);
         }
 
         if (!empty($scripts['headBottomScript'])) {
-            $headRegex = '/(<\s*\/head\s*>)/';                  
+            $headRegex = '/(<\/head\s*>)/';                  
             $newContent = preg_replace($headRegex, "\r\n".$scripts['headBottomScript']."\r\n$1", $newContent, 1);                   
         }
 
         if (!empty($scripts['bodyBottomScript'])) {
-            $bodyRegex = '/(<\s*\/body\s*>)/';
+            $bodyRegex = '/(<\/body\s*>)/';
             $newContent = preg_replace($bodyRegex, "\r\n".$scripts['bodyBottomScript']."\r\n$1", $newContent, 1);
         }                        
           
         return $newContent;
     }
   
+     /**
+     * This will retrieve the site ID of the page whether saved or published
+     * 
+     * @param int $idPage Id of page asked     
+     * @return array
+     */
+    public function getSiteId($pageId = null)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('meliscmspagescripteditor_get_site_id_start', $arrayParameters);
+
+        //check first the published pages
+        $melisPage = $this->getServiceManager()->get('MelisEnginePage');
+        $datasPage = $melisPage->getDatasPage($arrayParameters['pageId'], 'published'); 
+        $pageSiteId = 0;
+
+        if ($datasPage->getMelisTemplate()) {
+            $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
+        }            
+
+        //if page not yet published, check the saved pages
+        if (empty($pageSiteId)) {                
+            $datasPage = $melisPage->getDatasPage($pageId,'saved'); 
+
+            if ($datasPage->getMelisTemplate()) {
+                $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
+            }                
+        }
+
+        $arrayParameters['result'] = $pageSiteId;
+        $arrayParameters = $this->sendEvent('meliscmspagescripteditor_get_site_id_end', $arrayParameters);
+        return $arrayParameters['result'];
+    }
 }

@@ -303,29 +303,14 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
             if ($exceptionForm->isValid()) {
                 $siteScriptExceptionData = $exceptionForm->getData();
                 $scriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
+                $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
 
                 if ($siteScriptExceptionData['tool_site_mcse_page_id']) {
                     
                     if ($postValues['operation'] == 'add') {
 
                         //check here if the selected page belongs to current site by getting the site id of the page
-                        //check first the published pages
-                        $melisPage = $this->getServiceManager()->get('MelisEnginePage');
-                        $datasPage = $melisPage->getDatasPage($pageId, 'published'); 
-                        $pageSiteId = 0;
-
-                        if ($datasPage->getMelisTemplate()) {
-                            $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
-                        }            
-
-                        //if page not yet published, check the saved pages
-                        if (empty($pageSiteId)) {                
-                            $datasPage = $melisPage->getDatasPage($pageId,'saved'); 
-
-                            if ($datasPage->getMelisTemplate()) {
-                                $pageSiteId = $datasPage->getMelisTemplate()->tpl_site_id;
-                            }                
-                        }
+                        $pageSiteId = $pageScriptEditorService->getSiteId($pageId);
 
                         //page is ok if its site id is the same with the selected site id from the site tool
                         if ($siteId == $pageSiteId) {
@@ -339,8 +324,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                                 ]);        
                                 $errors = $exceptionForm->getMessages(); 
                             } else {
-                                //add to exception list if not yet existing       
-                                $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
+                                //add to exception list if not yet existing    
                                 $res = $pageScriptEditorService->addScriptException($siteId, $pageId);
 
                                 if ($res) {
