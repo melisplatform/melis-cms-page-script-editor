@@ -261,7 +261,8 @@ return [
                                 ],                          
                                 'attributes' => [
                                     'id' => 'tool_site_mcse_page_id',
-                                    'value' => '',                                   
+                                    'value' => '',     
+                                    'min' => '1',                              
                                 ],
                             ],
                         ],                     
@@ -281,13 +282,24 @@ return [
                                     ],
                                 ],    
                                 [
-                                'name' => 'IsInt',
+                                    'name' => 'IsInt',
+                                    'break_chain_on_failure' => true,
                                     'options' => [
                                         'messages' => [
                                             \Laminas\I18n\Validator\IsInt::NOT_INT  => 'tr_meliscmspagescripteditor_integer_only'
                                         ],                                                                       
                                     ],
-                                ],                                                                  
+                                ],   
+                                [
+                                    'name' => '\Laminas\Validator\GreaterThan',
+                                    'options' => [
+                                        'min' => 0,
+                                        //'inclusive' => true,
+                                        'messages' => [
+                                            \Laminas\Validator\GreaterThan::NOT_GREATER => 'tr_meliscmspagescripteditor_greater_than_0',
+                                        ],
+                                    ],
+                                ],                                                               
                             ],
                             'filters'  => [      
                                 ['name' => 'StripTags'],                        

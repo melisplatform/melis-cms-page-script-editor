@@ -40,6 +40,7 @@
 		'tr_meliscmspagescripteditor_delete_exception_success' => 'Successfully deleted the exception',
 		'tr_meliscmspagescripteditor_err_empty' => 'The input is required and cannot be empty',
         'tr_meliscmspagescripteditor_integer_only' => 'The input must be integer only',
+        'tr_meliscmspagescripteditor_greater_than_0' => 'The input must be greater than 0',
 
 		
     ];

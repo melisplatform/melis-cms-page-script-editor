@@ -37,6 +37,7 @@
 		'tr_meliscmspagescripteditor_delete_exception_success' => 'Exception supprimée avec succès',
 		'tr_meliscmspagescripteditor_err_empty' => 'Champ requis, ne peut être vide',
 		'tr_meliscmspagescripteditor_integer_only' => 'La saisie doit être un nombre entier uniquement',
+		'tr_meliscmspagescripteditor_greater_than_0' => 'La donnée doit être supérieur à 0',
     ];
 
     		

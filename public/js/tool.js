@@ -2,7 +2,7 @@ $(function(){
     // Tool scripts
     $body = $("body");    
     var loader = '<div id="loader" class="overlay-loader"><img class="loader-icon spinning-cog" src="/MelisCore/assets/images/cog12.svg" data-cog="cog12"></div>';
-
+    
 
     /**
      * Exclude site script checkbox
@@ -43,8 +43,9 @@ $(function(){
     }); 
 
     //add page to exception list
-    $body.on('click', '#add_tool_site_script_exception_btn', function (event) {         
-        var pageId = $("#tool_site_exception_page_id").val();
+    $body.on('click', '.add_tool_site_script_exception_btn', function (event) {      
+        var siteId = activeTabId.split("_")[0];       
+        var pageId = $("#"+siteId+"tool_site_exception_page_id").val();
         
         //calls function to add exception in DB
         saveSiteScriptException('add', pageId);    
@@ -70,19 +71,19 @@ $(function(){
                 melisHelper.melisOkNotification( data.textTitle, data.textMessage);
                 
                 //remove highlight
-                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").removeClass('tool-site-page-exception-error');
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#"+siteId+"tool_site_exception_page_id").removeClass('tool-site-page-exception-error');
                
                 // refresh the main list table 
                 melisHelper.zoneReload(siteId+"_id_meliscms_tool_sites_script_exceptions", "meliscms_tool_sites_script_exceptions", {siteId:siteId});   
 
                 //empty input field
-                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").val("");                 
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#"+siteId+"tool_site_exception_page_id").val("");                 
 
             } else {
                 melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);  
                 
                 //highlight input field           
-                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#tool_site_exception_page_id").addClass('tool-site-page-exception-error');               
+                $("#"+siteId+"_id_meliscms_tool_sites_script_content").find("#"+siteId+"tool_site_exception_page_id").addClass('tool-site-page-exception-error');               
             }
 
         }).fail(function () {                    
