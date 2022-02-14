@@ -61,7 +61,7 @@ In case of problems, SQL files are located here:
 ### Page Script Editor Service
 
 ```
-Files: 
+File: 
       - /melis-cms-page-script-editor/src/Service/MelisCmsPageScriptEditorService.php   
 ```
 
