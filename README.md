@@ -50,7 +50,7 @@ In case of problems, SQL files are located here:
 ### Scripts Tab in Melis CMS' Page System
 
 - A 'Scripts' tab is added inside Melis CMS' page system where the user can add scripts to be inserted after the opening head tag, before the closing head tag, or before the closing body tag of the page when rendered
-- The user may opt to exclude the site's scripts and just include the page's defined scripts in the rendering
+- The user may opt to exclude the site's scripts in which during the rendering process, only the page's defined scripts are included
 
 ### Scripts Tab in Melis CMS' Tool Site
 
@@ -76,7 +76,7 @@ Files:
     $resultList = $pageScriptEditorService->getMixedScriptsPerPage($pageId);   
     ```
     - Common methods this service is used for are as follows:
-        - Retrieving page script: getScriptsPerPage(...)
+        - Retrieving page scripts: getScriptsPerPage(...)
         - Retrieving site scripts : getScriptsPerSite(...)
         - Retrieving site exceptions: getScriptExceptions(...)
         - Saving page or site scripts : addScript(...)
