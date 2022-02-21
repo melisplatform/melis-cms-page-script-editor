@@ -54,7 +54,7 @@ In case of problems, SQL files are located here:
 
 ### Scripts Tab in Melis CMS' Tool Site
 
-- A 'Scripts' tab is added inside Melis CMS' Tool Site in which the scripts that are set here will be applied to all pages belonging to the site, except for the pages that exclude the site's scripts
+- A 'Scripts' tab is added inside Melis CMS' Tool Site in which the scripts that are set here will be applied to all pages belonging to the site, except for the pages that excluded the site's scripts
 - List of pages that exclude the site's scripts are displayed and the user has the option to remove the page from the exception list
 - The user also has the ability to add a page to the exception list 
 
