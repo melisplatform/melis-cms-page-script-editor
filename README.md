@@ -24,6 +24,8 @@ Run the composer command:
 composer require melisplatform/melis-cms-page-script-editor
 ```
 
+The Melis CMS Page Script Editor module needs to be manually activated on the chosen site for the defined scripts to be rendered. This will be done by going to Site Tools > Sites, select a site, then activate the module in the 'Module Loading' tab.  
+
 ### Database
 
 Database model is accessible via the MySQL Workbench file:
