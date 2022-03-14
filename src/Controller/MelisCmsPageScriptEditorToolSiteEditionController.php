@@ -200,9 +200,9 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         if ($siteId) {        
 
             //get the count of the exceptions of the given site
-            $scriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
-            $exceptionCount = $scriptExceptionTable->getTotalData('mcse_site_id', $siteId);
-
+            $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
+            $exceptionCount = $pageScriptEditorService->getScriptExceptions($siteId, null, null)->count();
+           
             //get the result table
             $melisTool = $this->getServiceManager()->get('MelisCoreTool');        
             $melisTool->setMelisToolKey('meliscmspagescripteditor', 'meliscmspagescripteditor_site_script_exceptions');//the keys found in app.tools.php    

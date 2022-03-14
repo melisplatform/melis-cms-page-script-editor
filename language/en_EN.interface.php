@@ -34,7 +34,7 @@
 		/*Errors/Prompts*/
 		'tr_meliscmspagescripteditor_add_exception_error' => 'Error encountered while adding the exception',
 		'tr_meliscmspagescripteditor_add_exception_duplicate_error' => 'Page is already added in the exception list',		
-		'tr_meliscmspagescripteditor_add_exception_wrong_site_error' => 'Page selected is outside the current site',
+		'tr_meliscmspagescripteditor_add_exception_wrong_site_error' => 'This identifier doesn\'t match any page of this site',
 		'tr_meliscmspagescripteditor_add_exception_success' => 'Successfully added the exception',
 		'tr_meliscmspagescripteditor_delete_exception_error' => 'Error encountered while deleting the exception',		
 		'tr_meliscmspagescripteditor_delete_exception_success' => 'Successfully deleted the exception',

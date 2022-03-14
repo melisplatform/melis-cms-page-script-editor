@@ -54,6 +54,9 @@ class MelisCmsScriptExceptionTable extends MelisGenericTable
         if ($siteId) {   
             $select->where(array('mcse_site_id' => $siteId));  
         } 
+
+        //display only the page that is existing and not yet deleted       
+        $select->having->isNotNull('page_name');
     
         if (!is_null($orderColumn)) {            
             $select->order($orderColumn.' '.$order);   

@@ -31,7 +31,7 @@
 		/*Errors/Prompts*/
 		'tr_meliscmspagescripteditor_add_exception_error' => 'Erreur lors de l\'ajout de l\'exception',
 		'tr_meliscmspagescripteditor_add_exception_duplicate_error' => 'La page est déjà présente dans la liste des exceptions',		
-		'tr_meliscmspagescripteditor_add_exception_wrong_site_error' => 'La page sélectionée est en dehors du site actuel',
+		'tr_meliscmspagescripteditor_add_exception_wrong_site_error' => 'Cet identifiant de page ne correspond pas à une page de ce site',
 		'tr_meliscmspagescripteditor_add_exception_success' => 'Exception ajoutée avec succès',
 		'tr_meliscmspagescripteditor_delete_exception_error' => 'Erreur lors de la suppression de l\'exception',		
 		'tr_meliscmspagescripteditor_delete_exception_success' => 'Exception supprimée avec succès',

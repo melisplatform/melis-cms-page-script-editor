@@ -209,7 +209,7 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
          
             //set the body bottom script
             $bodyBottomScript = !empty($siteScripts['mcs_body_bottom']) ? ($siteScripts['mcs_body_bottom'] . "\r\n") : '';
-            $bodyBottomScript = $bodyBottomScript . (!empty($pageScripts['mcs_body_bottom']) ? $pageScripts['mcs_body_bottom'] : '');            
+            $bodyBottomScript = $bodyBottomScript . (!empty($pageScripts['mcs_body_bottom']) ? $pageScripts['mcs_body_bottom'] : '');
         }      
 
         $finalScripts = array (
