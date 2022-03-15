@@ -41,8 +41,8 @@ class MelisCmsPageScriptEditorScriptTagListener extends MelisGeneralListener imp
 				
 				$renderMode = $routeMatch->getParam('renderMode');
 
-				// Only for Melis Front or Back routes
-				if ($renderMode == 'melis' || $renderMode == 'front') {
+				// Only for Melis Front route
+				if ($renderMode == 'front') {
 					$sm = $e->getApplication()->getServiceManager();
 				
 					// Get the response generated
