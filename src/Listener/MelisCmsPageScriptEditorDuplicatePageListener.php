@@ -23,7 +23,7 @@ use MelisCore\Listener\MelisGeneralListener;
 class MelisCmsPageScriptEditorDuplicatePageListener extends MelisGeneralListener implements ListenerAggregateInterface
 {
 
-	 public function attach(EventManagerInterface $events, $priority = 1)
+	public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->attachEventListener(
             $events,
@@ -32,7 +32,7 @@ class MelisCmsPageScriptEditorDuplicatePageListener extends MelisGeneralListener
         		'meliscms_page_duplicate_start', 
         		'melis_cms_duplicate_page_start'
         	], 
-        	function($event){
+        	function ($event) {
 
         		$params = $event->getParams();
         		$pageId = $params['pageId'];
@@ -60,10 +60,11 @@ class MelisCmsPageScriptEditorDuplicatePageListener extends MelisGeneralListener
         		'meliscms_page_duplicate_end', 
         		'melis_cms_duplicate_page_end'
         	], 
-        	function($event){       
+        	function ($event) {       
         		$params = $event->getParams();
         		$pageId = $params['pageId'];
 
+        		//for the duplicate tree action
         		if ($event->getName() == 'melis_cms_duplicate_page_end') {
         			$pageId = $params['results'];
         		}
@@ -85,8 +86,8 @@ class MelisCmsPageScriptEditorDuplicatePageListener extends MelisGeneralListener
 			    }
 
 			    //unset session data
-			    $container['melis-cms-page-script-editor-script-data'] = null;
-			    $container['melis-cms-page-script-editor-script-exception-data'] = null;
+			    unset($container['melis-cms-page-script-editor-script-data']);
+			    unset($container['melis-cms-page-script-editor-script-exception-data']);
         	},
         100
         );
