@@ -16,6 +16,8 @@ use Laminas\Stdlib\ArrayUtils;
 use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorSavePageListener;
 use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorSaveSiteScriptListener; 
 use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorScriptTagListener;
+use MelisCmsPageScriptEditor\Listener\MelisCmsPageScriptEditorDuplicatePageListener; 
+
 
 class Module
 {
@@ -36,7 +38,8 @@ class Module
             if (!empty($module[0])) {
                 if ($module[0] == 'melis-backoffice') {
                     (new MelisCmsPageScriptEditorSavePageListener())->attach($eventManager);
-                    (new MelisCmsPageScriptEditorSaveSiteScriptListener())->attach($eventManager);                    
+                    (new MelisCmsPageScriptEditorSaveSiteScriptListener())->attach($eventManager);   
+                    (new MelisCmsPageScriptEditorDuplicatePageListener())->attach($eventManager);                                       
                 } else {
                     (new MelisCmsPageScriptEditorScriptTagListener())->attach($eventManager);
                 }

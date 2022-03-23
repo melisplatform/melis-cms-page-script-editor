@@ -161,6 +161,26 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
 
 
     /**
+     * This method will retrieve the script exception data for the given page id
+     * @param int|null $pageId
+     * @return array
+     */
+    public function getScriptsExceptionPerPage($pageId = null)
+    { 
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('meliscmspagescripteditor_get_page_script_exception_start', $arrayParameters);
+        
+        $melisCmsScriptExceptionTable = $this->getServiceManager()->get('MelisCmsScriptExceptionTable'); 
+        $pageSiteScriptException = $melisCmsScriptExceptionTable->getEntryByField('mcse_page_id', $arrayParameters['pageId']);
+        
+        $arrayParameters['result'] = $pageSiteScriptException;
+        $arrayParameters = $this->sendEvent('meliscmspagescripteditor_get_page_script_exception_end', $arrayParameters);
+        return $arrayParameters['result'];
+    }
+
+
+
+    /**
      * This method will retrieve the combination of site and page scripts for the given page id
      * This will also consider whether the page excludes the site's scripts or not
      * @param int|null $pageId
