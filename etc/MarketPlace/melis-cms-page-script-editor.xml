@@ -1,0 +1,23 @@
+<melis-cms-page-script-editor>
+	<package_info>
+		<mp_title>Melis CMS Page Script Editor</mp_title>
+		<mp_subtitle>The module that brings you a system that allows you to add custom scripts to a page or to the full site.</mp_subtitle>
+		<mp_description>
+			Melis CMS Page Script Editor is a tool that will allow you to add custom scripts to the page inside the Melis CMS Page Edition System.  Custom scripts can also be added to the full site inside the Tool Site module.
+		</mp_description>
+		<mp_maintainers>melisplatform</mp_maintainers>
+		<mp_group>Melis Cms</mp_group>
+	</package_info>
+	<package_images>
+		<img_1>
+			<mpi_image_title>MelisCMSPageScriptEditor's Page Edition</mpi_image_title>
+			<mpi_image_file>melis-cms-page-script-editor-1.JPG</mpi_image_file>
+			<mpi_image_main>1</mpi_image_main>
+		</img_1>
+		<img_2>
+			<mpi_image_title>MelisCMSPageScriptEditor's Tool Site Edition</mpi_image_title>
+			<mpi_image_file>melis-cms-page-script-editor-2.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_2>		
+	</package_images>
+</melis-cms-page-script-editor>
