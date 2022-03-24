@@ -15,7 +15,6 @@ The following modules need to be installed to run the Melis CMS Page Script Edit
 - Melis engine
 - Melis front
 - Melis CMS
-- Melis Demo CMS
 
 ### Installing
 
