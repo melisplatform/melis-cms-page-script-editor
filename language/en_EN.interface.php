@@ -1,8 +1,8 @@
 <?php
     return [
 		'tr_meliscmspagescripteditor_title' => 'Scripts',
-		'tr_meliscmspagescripteditor_page_edition_desc' => 'Customs scripts can be added to the page through this interface and will allow you control over a large spectrum of scripts (analytics and others). Scripts can also be added for the full site in the tool site.',
-		'tr_meliscmspagescripteditor_site_edition_desc' => 'Customs scripts can be added to the site through this interface and will allow you control over a large spectrum of scripts (analytics and others). Scripts can also be added per page in every page edition.',
+		'tr_meliscmspagescripteditor_page_edition_desc' => 'Customs scripts can be added to the page through this interface and will allow you control over a large spectrum of scripts (analytics and others). <br> Scripts can also be added for the full site in the tool site.',
+		'tr_meliscmspagescripteditor_site_edition_desc' => 'Customs scripts can be added to the site through this interface and will allow you control over a large spectrum of scripts (analytics and others). <br> Scripts can also be added per page in every page edition.',
 		'tr_meliscmspagescripteditor_header' => 'Header',
 		'tr_meliscmspagescripteditor_content' => 'Content',
 
