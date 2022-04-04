@@ -228,9 +228,8 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         $draw = 0;
         $resultList = [];
 
-        if ($this->getRequest()->isPost()) {      
-            $request = $this->getRequest();
-            $postValues = get_object_vars($request->getPost());            
+        if ($this->getRequest()->isPost()) {                 
+            $postValues = $this->getRequest()->getPost()->toArray();            
             $siteId = (int) $postValues['siteId'];
             $draw = $postValues['draw'];
             $sortCol = null;
@@ -291,7 +290,8 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         $request = $this->getRequest();
 
         if ($request->isPost()) {          
-            $postValues = get_object_vars($request->getPost()); 
+            $postValues = $request->getPost()->toArray(); 
+
             $siteId = $postValues['siteId'];
             $pageId = $postValues['tool_site_mcse_page_id'];   
             $textMessage = $postValues['operation'] == 'add' ? $translator->translate('tr_meliscmspagescripteditor_add_exception_error') : $translator->translate('tr_meliscmspagescripteditor_delete_exception_error');
