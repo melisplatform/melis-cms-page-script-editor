@@ -83,7 +83,7 @@ return [
                         'class' => 'page-script-editor',
                         'method' => 'POST'                       
                     ],
-                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializableHydrator',
                     'elements' => [
                         [
                             'spec' => [
@@ -198,7 +198,7 @@ return [
                         'class' => 'page-script-editor-exception',
                         'method' => 'POST'                       
                     ],
-                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializableHydrator',
                     'elements' => [
                         [
                             'spec' => [
@@ -250,7 +250,7 @@ return [
                         'class' => 'page-script-editor-tool-site-exception',
                         'method' => 'POST'                       
                     ],
-                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializableHydrator',
                     'elements' => [
                         [
                             'spec' => [
