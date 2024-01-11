@@ -20,6 +20,8 @@ use MelisCore\Listener\MelisGeneralListener;
  */
 class MelisCmsPageScriptEditorScriptTagListener extends MelisGeneralListener implements ListenerAggregateInterface
 {
+	public $listeners = [];
+	
 	public function attach(EventManagerInterface $events, $priority = 1)
 	{
 		$callBackHandler = $events->attach(
