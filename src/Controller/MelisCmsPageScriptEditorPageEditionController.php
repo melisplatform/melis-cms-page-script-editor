@@ -80,6 +80,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
         $exceptionSuccess = 1;
         $scriptErrors = [];
         $exceptionErrors = [];
+        $translator = $this->getServiceManager()->get('translator');
                 
         // Check if post
         $request = $this->getRequest();
