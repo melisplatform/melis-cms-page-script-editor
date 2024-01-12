@@ -29,20 +29,15 @@ class Module
 
         $this->createTranslations($e);
 
-        $sm = $e->getApplication()->getServiceManager();
-        $routeMatch = $sm->get('router')->match($sm->get('request'));
-        if (!empty($routeMatch)) {
-            $routeName = $routeMatch->getMatchedRouteName();
-            $module = explode('/', $routeName);
-                          
-            if (!empty($module[0])) {
-                if ($module[0] == 'melis-backoffice') {
-                    (new MelisCmsPageScriptEditorSavePageListener())->attach($eventManager);
-                    (new MelisCmsPageScriptEditorSaveSiteScriptListener())->attach($eventManager);   
-                    (new MelisCmsPageScriptEditorDuplicatePageListener())->attach($eventManager);                                       
-                } else {
-                    (new MelisCmsPageScriptEditorScriptTagListener())->attach($eventManager);
-                }
+        $uri = $_SERVER['REQUEST_URI'];
+
+        if (!empty($uri)) {
+            if (strpos($uri, '/melis') !== false) {
+                (new MelisCmsPageScriptEditorSavePageListener())->attach($eventManager);
+                (new MelisCmsPageScriptEditorSaveSiteScriptListener())->attach($eventManager);   
+                (new MelisCmsPageScriptEditorDuplicatePageListener())->attach($eventManager);         
+            } else {
+                (new MelisCmsPageScriptEditorScriptTagListener())->attach($eventManager);
             }
         }
     }
