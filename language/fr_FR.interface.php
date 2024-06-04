@@ -29,6 +29,7 @@
 		'tr_meliscmspagescripteditor_add_exception_desc' => 'Ajouter une page à la liste des exceptions et ne pas inclure de script du site pour cette page',
 		'tr_meliscmspagescripteditor_tool_site_exception_title' => 'Exception de script du site',
 		'tr_meliscmspagescripteditor_tool_site_no_exception_found' => 'Aucune exception trouvée.',
+		'tr_meliscmspagescripteditor_add_button_text' => 'Ajouter',
 
 		/*Errors/Prompts*/
 		'tr_meliscmspagescripteditor_add_exception_error' => 'Erreur lors de l\'ajout de l\'exception',
