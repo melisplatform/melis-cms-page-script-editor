@@ -225,7 +225,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
      */
     public function getScriptExceptionsAction()
     {       
-        $draw = 0;
+        $draw = $this->getRequest()->getPost('draw');
         $resultList = [];
 
         if ($this->getRequest()->isPost()) {                 
