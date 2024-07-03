@@ -261,7 +261,9 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
         return new JsonModel([  
             'draw' => (int) $draw,         
-            'data' => $resultList                    
+            'data' => $resultList,
+            'recordsTotal' => count($resultList),
+            'recordsFiltered' => count($resultList),
         ]);
     }
 
