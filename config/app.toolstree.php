@@ -32,7 +32,8 @@ return [
                             'conf' => [
                                 'id' => 'id_meliscmspagescripteditor_header',
                                 'melisKey' => 'meliscmspagescripteditor_header',
-                                'name' => 'tr_meliscmspagescripteditor_header',
+                                'name' => 'tr_meliscmspagescripteditor_content',
+                                'rightsDisplay' => 'none',
                             ],
                             'forward' => [
                                 'module' => 'MelisCmsPageScriptEditor',
@@ -48,7 +49,10 @@ return [
         ],
 
         //site tool script tab
-        'meliscmssitetoolscripteditor' => [            
+        'meliscmssitetoolscripteditor' => [      
+            'conf' => [
+                'rightsDisplay' => 'none',
+            ],      
             'interface' => [
                 'meliscms_tool_sites_scripts' => [
                     'conf' => [
@@ -69,7 +73,7 @@ return [
                             'conf' => [
                                 'id' => 'id_meliscms_tool_sites_script_content',
                                 'melisKey' => 'meliscms_tool_sites_script_content',
-                                'name' => 'tr_melis_cms_sites_tool_content_edit_script_tab_content',
+                                'name' => 'tr_meliscmspagescripteditor_content',
                                 'rightsDisplay' => 'true',
                             ],
                             'forward' => [
