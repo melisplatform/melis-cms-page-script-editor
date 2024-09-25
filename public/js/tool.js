@@ -1,8 +1,7 @@
-$(function(){
+$(function() {
     // Tool scripts
-    $body = $("body");    
+    var $body = $("body");
     var loader = '<div id="loader" class="overlay-loader"><img class="loader-icon spinning-cog" src="/MelisCore/assets/images/cog12.svg" data-cog="cog12"></div>';
-    
 
     /**
      * Exclude site script checkbox
@@ -95,20 +94,48 @@ $(function(){
     function getDataTable() {        
         var siteId = activeTabId.split("_")[0];
         var MelisCmsPageScriptExceptionTable = null;
+        
+            if ( $("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").length > 0 ) {      
+                MelisCmsPageScriptExceptionTable = $("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").DataTable();
+            }
 
-        if ($("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").length > 0) {      
-            MelisCmsPageScriptExceptionTable = $("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable").DataTable();             
-        }
-
-        return MelisCmsPageScriptExceptionTable;        
+            return MelisCmsPageScriptExceptionTable;        
     }
 
     //used in tool site edition script tab to set the site id used in getting the script exceptions of the site
     window.initSiteId = function (data) {   
         var siteId = activeTabId.split("_")[0];
+            
+            if (!isNaN(siteId)) {   
+                data.siteId = siteId;    
+            }
+    };
 
-        if (!isNaN(siteId)) {   
-            data.siteId = siteId;    
-        }       
+    //callback
+    window.scriptExceptionsCallback = function() {
+        var siteId = activeTabId.split("_")[0],
+            $dtWrapper = $("#"+siteId+"MelisCmsPageScriptEditorScriptExceptionsTable_wrapper"),
+            $dtLength = $dtWrapper.find(".dt-length"),
+            $tableLengthSelect = $dtLength.find("select"),
+            $dtInfo = $dtWrapper.find(".dt-info"),
+            $dtSearch = $dtWrapper.find(".dt-search"),
+            $dtPaging = $dtWrapper.find(".dt-paging"),
+            scriptDt = getDataTable();
+            
+        var dataCount = scriptDt.data().count(),
+            selectOptionLowestNum = parseInt($tableLengthSelect.find("option:first-child").val());
+
+            if ( dataCount <= selectOptionLowestNum ) {
+                $dtLength.hide();
+                $dtInfo.hide();
+                $dtSearch.hide();
+                $dtPaging.hide();
+            }
+            else {
+                $dtLength.show();
+                $dtInfo.show();
+                $dtSearch.show();
+                $dtPaging.show();
+            }
     };
 });

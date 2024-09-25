@@ -19,12 +19,12 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     const PageScriptToolSiteExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_tool_site_exception_form';
     
     /* Renders the script tab
-     * @return \Laminas\View\Model\ViewModel
+    * @return \Laminas\View\Model\ViewModel
     */    
     public function renderToolSiteScriptsAction()
     {    
         $siteId = (int) $this->params()->fromQuery('siteId', '');
-       
+    
         $rightService = $this->getServiceManager()->get('MelisCoreRights');
         $canAccess = $rightService->canAccess('meliscms_tool_sites_script_content');
 
@@ -35,7 +35,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     }
 
     /* Renders the script tab content
-     * @return \Laminas\View\Model\ViewModel
+    * @return \Laminas\View\Model\ViewModel
     */  
     public function renderToolSiteScriptContentAction()
     {
@@ -53,7 +53,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         // get site script data if there are any
         $scriptTable = $this->getServiceManager()->get('MelisCmsScriptTable'); 
         $siteScript = $scriptTable->getEntryByField('mcs_site_id', $siteId)->current();
-     
+    
         // bind data to form
         if ($siteScript) {
             $scriptForm->bind($siteScript);
@@ -70,12 +70,12 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     }
     
     /* Saves the script to DB
-     * @return \Laminas\View\Model\JsonModel
+    * @return \Laminas\View\Model\JsonModel
     */
     public function saveSiteScriptAction()
     {              
         $siteId = $this->params('siteId');   
-               
+            
         $eventDatas = array('siteId' => $siteId);
         $this->getEventManager()->trigger('meliscms_site_save_script_start', null, $eventDatas);
         $scriptSuccess = 1;
@@ -105,7 +105,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                 //set page id to null  
                 $pageId = null;        
                 $scriptSuccess = $addScriptHelper->addScriptData($this->getServiceManager(), $scriptData, $siteId, $pageId);
-                           
+                        
             } else {
                 $scriptSuccess = 0;
                 $scriptErrors = array($scriptForm->getMessages());   
@@ -144,7 +144,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
             'meliscmspagescripteditor_script_form',
             'tool_site_edition_'.$siteId . '_'
         );
-   
+
         /**
          * Generate the form through factory and change ElementManager to
          * have access to our custom Melis Elements
@@ -176,7 +176,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
             'meliscmspagescripteditor_tool_site_exception_form',
             'tool_site_edition_exception_'.$siteId . '_'
         );
-   
+
         /**
          * Generate the form through factory and change ElementManager to
          * have access to our custom Melis Elements
@@ -185,12 +185,12 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $scriptExceptionForm = $factory->createForm($appConfigForm);
-       
+    
         return $scriptExceptionForm;
     }
 
     /* Render the script exception table
-     * @return \Laminas\View\Model\ViewModel
+    * @return \Laminas\View\Model\ViewModel
     */  
     public function renderScriptExceptionsAction()
     {    
@@ -202,11 +202,11 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
             //get the count of the exceptions of the given site
             $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
             $exceptionCount = $pageScriptEditorService->getScriptExceptions($siteId, null, null)->count();
-           
+        
             //get the result table
             $melisTool = $this->getServiceManager()->get('MelisCoreTool');        
             $melisTool->setMelisToolKey('meliscmspagescripteditor', 'meliscmspagescripteditor_site_script_exceptions');//the keys found in app.tools.php    
-       
+    
             $tableConfig = $melisTool->getTableConfig();
             $tableId =  $siteId.'MelisCmsPageScriptEditorScriptExceptionsTable';
             $view->siteId = $siteId;                
@@ -225,7 +225,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
      */
     public function getScriptExceptionsAction()
     {       
-        $draw = 0;
+        $draw = $this->getRequest()->getPost('draw');
         $resultList = [];
 
         if ($this->getRequest()->isPost()) {                 
@@ -252,7 +252,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                 //get the melis cms page script editor service
                 $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService'); 
                 $results = $pageScriptEditorService->getScriptExceptions($siteId, $sortCol, $sortOrder)->toArray();
-                               
+                            
                 if ($results) {
                     $resultList = $results;                   
                 } 
@@ -261,13 +261,15 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
         return new JsonModel([  
             'draw' => (int) $draw,         
-            'data' => $resultList                    
+            'data' => $resultList,
+            'recordsTotal' => count($resultList),
+            'recordsFiltered' => count($resultList),
         ]);
     }
 
 
     /* Renders the view page in front button
-     * @return \Laminas\View\Model\ViewModel
+    * @return \Laminas\View\Model\ViewModel
     */
     public function renderTableActionDeleteExceptionAction()
     {
@@ -276,7 +278,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
 
     /* Saves the site script exception to DB
-     * @return \Laminas\View\Model\JsonModel
+    * @return \Laminas\View\Model\JsonModel
     */
     public function saveSiteScriptExceptionAction()
     {      
@@ -317,7 +319,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
 
                             //check if already existing in DB
                             $isExisting = $scriptExceptionTable->getEntryByField('mcse_page_id', $pageId)->current();
-                 
+                
                             if ($isExisting) {                                   
                                 $exceptionForm->get('tool_site_mcse_page_id')->setMessages([
                                     'Duplicate' => $translator->translate('tr_meliscmspagescripteditor_add_exception_duplicate_error')
@@ -331,7 +333,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                                     $success = 1;    
                                 } 
                             }
-                           
+                        
                         } else {
                             $exceptionForm->get('tool_site_mcse_page_id')->setMessages([
                                 'Wrong Site' => $translator->translate('tr_meliscmspagescripteditor_add_exception_wrong_site_error')
@@ -352,7 +354,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                         //set success message
                         $textMessage = $postValues['operation'] == 'add' ? $translator->translate('tr_meliscmspagescripteditor_add_exception_success') : $translator->translate('tr_meliscmspagescripteditor_delete_exception_success');
                     } else {
-                       
+                    
                         //set error message
                         $textMessage = $postValues['operation'] == 'add' ? $translator->translate('tr_meliscmspagescripteditor_add_exception_error') : $translator->translate('tr_meliscmspagescripteditor_delete_exception_error');                                            
                     }  
@@ -389,7 +391,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                     'textMessage' => $textMessage,
                     'textTitle' => $textTitle
             );
-           
+        
         } else {
             $result = array(
                     'success' => $success,
@@ -398,7 +400,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
                     'textTitle' => $textTitle
             );
         }
-          
+        
         return new JsonModel($result);         
     } 
 }
