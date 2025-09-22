@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Melis Technology (http://www.melistechnology.com)
@@ -12,6 +12,7 @@ namespace MelisCmsPageScriptEditor\Listener;
 use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\Session\Container;
 use MelisCore\Listener\MelisGeneralListener;
 
 /**
@@ -20,7 +21,7 @@ use MelisCore\Listener\MelisGeneralListener;
  */
 class MelisCmsPageScriptEditorSavePageListener extends MelisGeneralListener implements ListenerAggregateInterface
 {
-	
+
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $identifier = 'MelisCms';
@@ -30,15 +31,29 @@ class MelisCmsPageScriptEditorSavePageListener extends MelisGeneralListener impl
             'meliscms_page_publish_start',
         ];
 
-        $priority = 100;
+        $priority = 99;
 
         $this->attachEventListener($events, $identifier, $eventsName, [$this, 'savePageScript'], $priority);
     }
 
     public function savePageScript(EventInterface $event)
     {
+        $success = 1;
+
+        // Get the MelisCms Module session as page is saved in it
+        $container = new Container('meliscms');
+
+        // Update from the different save actions done
+        if (isset($container['action-page-tmp'])) {
+            if (isset($container['action-page-tmp']['success']))
+                $success = $container['action-page-tmp']['success'];
+        }
+
+        if (!$success)
+            return;
+
         $sm = $event->getTarget()->getEvent()->getApplication()->getServiceManager();
-        $melisCoreDispatchService = $sm->get('MelisCoreDispatch');    
+        $melisCoreDispatchService = $sm->get('MelisCoreDispatch');
 
         // Save script tab
         list($success, $errors, $datas) = $melisCoreDispatchService->dispatchPluginAction(
@@ -50,6 +65,6 @@ class MelisCmsPageScriptEditorSavePageListener extends MelisGeneralListener impl
         );
 
         if (!$success)
-            return;             
+            return;
     }
 }
