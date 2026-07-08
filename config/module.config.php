@@ -59,9 +59,11 @@ return [
         ],
     ],
     'controllers' => [
-        'invokables' => [          
-            'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEdition' => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEditionController::class, 
-            'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorToolSiteEdition' => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorToolSiteEditionController::class, 
+        'invokables' => [
+            'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEdition' => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEditionController::class,
+            'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorToolSiteEdition' => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorToolSiteEditionController::class,
+            // JSON API consumed by the React "Scripts" tab of the CMS Site editor (MelisCms brick).
+            'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorReact' => \MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorReactController::class,
         ],
     ],
     'view_manager' => [
