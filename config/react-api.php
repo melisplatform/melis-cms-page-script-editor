@@ -9,6 +9,17 @@ return [
                 'child_routes' => [
                     'melis-react-api' => [
                         'child_routes' => [
+                            'cms-page-scripts-save' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/cms-page/scripts/save[/]',
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'MelisCmsPageScriptEditor\Controller',
+                                        'controller'    => 'MelisReactApiPageScriptEditor',
+                                        'action'        => 'save',
+                                    ],
+                                ],
+                            ],
                             'cms-page-scripts' => [
                                 'type'    => 'Segment',
                                 'options' => [
