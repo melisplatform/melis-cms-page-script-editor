@@ -12,11 +12,30 @@ use MelisCore\Controller\MelisAbstractActionController;
  */
 class MelisReactApiPageScriptEditorController extends MelisAbstractActionController
 {
-    public function getAction(): HttpResponse
+    private const MELIS_KEY = 'meliscms_page_script_editor';
+
+    /**
+     * These endpoints inject custom <script>/HTML into the PUBLIC front rendering of a page, so they
+     * must require the page-script-editor tool right — not merely a session. Previously any
+     * authenticated BO user (even with zero CMS rights) could plant persistent XSS on any page.
+     */
+    private function denyUnlessAccess(): ?HttpResponse
     {
-        if (!$this->getServiceManager()->get('MelisCoreAuth')->hasIdentity()) {
+        $sm = $this->getServiceManager();
+        if (!$sm->get('MelisCoreAuth')->hasIdentity()) {
             return $this->json(['success' => false, 'error' => 'Unauthenticated'], 401);
         }
+        try {
+            if (!$sm->get('MelisCoreRights')->canAccess(self::MELIS_KEY)) {
+                return $this->json(['success' => false, 'error' => 'Forbidden'], 403);
+            }
+        } catch (\Throwable) {}
+        return null;
+    }
+
+    public function getAction(): HttpResponse
+    {
+        if ($deny = $this->denyUnlessAccess()) { return $deny; }
         try {
             $idPage = (int) $this->params()->fromQuery('idPage', 0);
             $db = $this->getServiceManager()->get('Laminas\Db\Adapter\AdapterInterface');
@@ -44,9 +63,7 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
     {
         $sm = $this->getServiceManager();
         $auth = $sm->get('MelisCoreAuth');
-        if (!$auth->hasIdentity()) {
-            return $this->json(['success' => false, 'error' => 'Unauthenticated'], 401);
-        }
+        if ($deny = $this->denyUnlessAccess()) { return $deny; }
         try {
             $body = json_decode((string) $this->getRequest()->getContent(), true) ?: [];
             $idPage = (int) ($body['idPage'] ?? 0);
