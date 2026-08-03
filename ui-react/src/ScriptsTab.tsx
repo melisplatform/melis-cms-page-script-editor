@@ -74,6 +74,14 @@ function TreeNode({ node, depth, onPick }: { node: MelisTreeNode; depth: number;
   )
 }
 
+// Idem mapAddError : la brique n'a pas le dico du module, on traduit les clés connues côté React.
+function mapSaveError(msg: string): string {
+  if (msg.includes('save_script_error') || msg === 'unknown_error') {
+    return tr("L'enregistrement des scripts a échoué.", 'Saving the scripts failed.')
+  }
+  return msg
+}
+
 interface Props {
   siteId: number
   /** Branche le save de l'onglet au Save GLOBAL de l'éditeur (null = désabonnement au démontage). */
@@ -124,7 +132,7 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
         const r = await fetchSiteScript(siteId).catch(() => null)
         if (r) setScriptId(r.script?.id ?? null)
       } catch (e) {
-        window.postMessage({ __melisNotif: true, kind: 'ko', title: tr('Scripts', 'Scripts'), message: String((e as Error)?.message ?? e) }, '*')
+        window.postMessage({ __melisNotif: true, kind: 'ko', title: tr('Scripts', 'Scripts'), message: mapSaveError(String((e as Error)?.message ?? e)) }, '*')
       }
     })
     return () => registerSave(null)

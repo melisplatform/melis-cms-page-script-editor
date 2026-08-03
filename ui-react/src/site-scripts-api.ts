@@ -24,7 +24,9 @@ async function apiFetch<T>(url: string, opts?: RequestInit): Promise<T> {
   let body: { success: boolean; data?: T; error?: string } | null = null
   try { body = await res.json() } catch { /* ignore */ }
   if (!res.ok || !body || !body.success) {
-    throw new Error(body?.error ?? `HTTP ${res.status}`)
+    // `HTTP 200` en message d'erreur n'a aucun sens pour l'utilisateur : ne l'utiliser en repli
+    // que pour un vrai statut d'échec, sinon rester générique.
+    throw new Error(body?.error || (res.ok ? 'unknown_error' : `HTTP ${res.status}`))
   }
   return body.data as T
 }

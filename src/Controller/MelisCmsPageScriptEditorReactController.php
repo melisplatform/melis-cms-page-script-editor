@@ -82,16 +82,37 @@ class MelisCmsPageScriptEditorReactController extends MelisAbstractActionControl
 
             $service = $this->getServiceManager()->get('MelisCmsPageScriptEditorService');
             $mcsId   = isset($body['id']) && $body['id'] ? (int) $body['id'] : null;
-            $ok = $service->addScript(
-                $siteId,
-                null,
-                (string) ($body['headTop'] ?? ''),
-                (string) ($body['headBottom'] ?? ''),
-                (string) ($body['bodyBottom'] ?? ''),
-                $mcsId
-            );
 
-            return $this->jsonResponse(['success' => (bool) $ok, 'data' => null]);
+            $headTop    = (string) ($body['headTop'] ?? '');
+            $headBottom = (string) ($body['headBottom'] ?? '');
+            $bodyBottom = (string) ($body['bodyBottom'] ?? '');
+
+            // Même sémantique que le legacy (MelisCmsPageScriptEditorAddScriptHelper::addScriptData) :
+            // les 3 champs vides = un SUCCÈS qui supprime l'entrée existante. Sans ça, addScript()
+            // court-circuite et renvoie null → success:false sans message → notif rouge « HTTP 200 ».
+            if ($headTop === '' && $headBottom === '' && $bodyBottom === '') {
+                if (!$mcsId) {
+                    // pas d'id fourni : on retrouve l'entrée du site comme le fait le formulaire legacy
+                    $current = $service->getScriptsPerSite($siteId)->current();
+                    $mcsId   = $current ? (int) ((array) $current)['mcs_id'] : null;
+                }
+                if ($mcsId) {
+                    $this->getServiceManager()->get('MelisCmsScriptTable')->deleteById($mcsId);
+                }
+
+                return $this->jsonResponse(['success' => true, 'data' => null]);
+            }
+
+            $ok = $service->addScript($siteId, null, $headTop, $headBottom, $bodyBottom, $mcsId);
+
+            if (!$ok) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'error'   => 'tr_meliscmspagescripteditor_save_script_error',
+                ], 500);
+            }
+
+            return $this->jsonResponse(['success' => true, 'data' => null]);
         } catch (\Throwable $e) {
             return $this->errorResponse($e);
         }
