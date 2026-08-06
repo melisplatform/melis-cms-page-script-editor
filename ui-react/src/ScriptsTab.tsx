@@ -4,6 +4,7 @@ import {
   type ExceptionItem,
 } from './site-scripts-api'
 import { fetchTreeNodes, type MelisTreeNode } from './cms-tree-api'
+import { FormErrorBanner, koNotify, type FormIssue } from './shared/melis-form-errors'
 
 /**
  * Onglet « Scripts » de l'éditeur de site — livré par le module MelisCmsPageScriptEditor (brique).
@@ -98,7 +99,9 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
 
   const [exceptions, setExceptions] = useState<ExceptionItem[]>([])
   const [pageIdInput, setPageIdInput] = useState('')
-  const [addError, setAddError] = useState<string | null>(null)
+  // Bannière d'erreur unifiée du bloc « Ajouter une exception » : titre + liste des champs en cause.
+  const [addErrTitle, setAddErrTitle] = useState<string | null>(null)
+  const [addIssues, setAddIssues] = useState<FormIssue[]>([])
   const [toDelete, setToDelete] = useState<ExceptionItem | null>(null)
 
   // Sélecteur d'arbre (bouton « sitemap »)
@@ -132,7 +135,7 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
         const r = await fetchSiteScript(siteId).catch(() => null)
         if (r) setScriptId(r.script?.id ?? null)
       } catch (e) {
-        window.postMessage({ __melisNotif: true, kind: 'ko', title: tr('Scripts', 'Scripts'), message: mapSaveError(String((e as Error)?.message ?? e)) }, '*')
+        koNotify(tr('Scripts', 'Scripts'), mapSaveError(String((e as Error)?.message ?? e)))
       }
     })
     return () => registerSave(null)
@@ -161,16 +164,25 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
     return msg
   }
 
+  // Libellé du champ identifiant de page (repris du placeholder), pour la liste de la bannière.
+  const pageIdLabel = tr('Identifiant de page', 'Page identifier')
+  const addHeadline = tr("Impossible d'ajouter l'exception.", 'Could not add the exception.')
+
   async function addByInput() {
     const id = parseInt(pageIdInput, 10)
-    if (!id) { setAddError(tr('Saisissez un identifiant de page.', 'Enter a page identifier.')); return }
-    setAddError(null)
+    if (!id) {
+      setAddErrTitle(addHeadline)
+      setAddIssues([{ label: pageIdLabel, message: tr('Saisissez un identifiant de page.', 'Enter a page identifier.') }])
+      return
+    }
+    setAddErrTitle(null); setAddIssues([])
     try {
       await addException(siteId, id)
       setPageIdInput('')
       reloadExceptions()
     } catch (e) {
-      setAddError(mapAddError(String((e as Error)?.message ?? e)))
+      setAddErrTitle(addHeadline)
+      setAddIssues([{ label: pageIdLabel, message: mapAddError(String((e as Error)?.message ?? e)) }])
     }
   }
 
@@ -236,9 +248,11 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
           'Add a page to the exception list and do not include the scripts directly from the site for this page',
         )}</p>
 
+        {addErrTitle && <div style={{ marginBottom: 14 }}><FormErrorBanner title={addErrTitle} issues={addIssues} /></div>}
+
         <div ref={treeRef} style={{ position: 'relative', display: 'flex', gap: 8, maxWidth: 560 }}>
           <input style={input} value={pageIdInput} inputMode="numeric"
-            onChange={(e) => { setPageIdInput(e.target.value.replace(/[^0-9]/g, '')); setAddError(null) }}
+            onChange={(e) => { setPageIdInput(e.target.value.replace(/[^0-9]/g, '')); setAddErrTitle(null); setAddIssues([]) }}
             onKeyDown={(e) => e.key === 'Enter' && addByInput()}
             placeholder={tr('Identifiant de page', 'Page identifier')} />
           <button style={{ ...btn, width: 40, padding: 0, flexShrink: 0, color: 'var(--color-muted-foreground)' }}
@@ -254,12 +268,11 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
               ) : roots.length === 0 ? (
                 <div style={{ padding: 12, fontSize: 13, color: 'var(--color-muted-foreground)' }}>{tr('Aucune page', 'No page')}</div>
               ) : roots.map((n) => (
-                <TreeNode key={n.key} node={n} depth={0} onPick={(id) => { setPageIdInput(String(id)); setAddError(null); setTreeOpen(false) }} />
+                <TreeNode key={n.key} node={n} depth={0} onPick={(id) => { setPageIdInput(String(id)); setAddErrTitle(null); setAddIssues([]); setTreeOpen(false) }} />
               ))}
             </div>
           )}
         </div>
-        {addError && <p style={{ margin: '10px 0 0', fontSize: 13, color: '#b91c1c' }}>{addError}</p>}
       </div>
 
       {/* Confirmation de suppression (comme le legacy) */}
