@@ -17,7 +17,13 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     // The form is loaded from the app.tools array
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptToolSiteExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_tool_site_exception_form';
-    
+
+    /** @INFO: Tool access check (CWE-862). */
+    private function hasAccess($key)
+    {
+        return $this->getServiceManager()->get('MelisCoreRights')->canAccess($key);
+    }
+
     /* Renders the script tab
     * @return \Laminas\View\Model\ViewModel
     */    
@@ -73,8 +79,13 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     * @return \Laminas\View\Model\JsonModel
     */
     public function saveSiteScriptAction()
-    {              
-        $siteId = $this->params('siteId');   
+    {
+        /** @INFO: Access check (tool right) — CWE-862 */
+        if (! $this->hasAccess('meliscms_tool_sites')) {
+            return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
+        }
+
+        $siteId = $this->params('siteId');
             
         $eventDatas = array('siteId' => $siteId);
         $this->getEventManager()->trigger('meliscms_site_save_script_start', null, $eventDatas);
@@ -224,7 +235,11 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
      * @return \Laminas\View\Model\JsonModel
      */
     public function getScriptExceptionsAction()
-    {       
+    {
+        if (! $this->hasAccess('meliscms_tool_sites')) {
+            return new JsonModel(['draw' => (int) $this->getRequest()->getPost('draw', 0), 'recordsTotal' => 0, 'recordsFiltered' => 0, 'data' => []]);
+        }
+
         $draw = $this->getRequest()->getPost('draw');
         $resultList = [];
 
@@ -281,7 +296,12 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     * @return \Laminas\View\Model\JsonModel
     */
     public function saveSiteScriptExceptionAction()
-    {      
+    {
+        /** @INFO: Access check (tool right) — CWE-862 */
+        if (! $this->hasAccess('meliscms_tool_sites')) {
+            return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
+        }
+
         $errors = [];
         $success = 0;
         $textMessage = "";

@@ -18,7 +18,13 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
     // The form is loaded from the app.tools array
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_exception_form';
- 
+
+    /** @INFO: Tool access check (CWE-862). */
+    private function hasAccess($key)
+    {
+        return $this->getServiceManager()->get('MelisCoreRights')->canAccess($key);
+    }
+
     /* Renders link check tab in Page Edition module
      * @return \Laminas\View\Model\ViewModel
     */    
@@ -71,8 +77,13 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
      * @return \Laminas\View\Model\ViewModel
     */
     public function saveScriptAction()
-    {   
-        $idPage = $this->params()->fromRoute('idPage', $this->params()->fromQuery('idPage', ''));       
+    {
+        /** @INFO: Access check (tool right) — CWE-862 */
+        if (! $this->hasAccess('meliscms_page')) {
+            return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
+        }
+
+        $idPage = $this->params()->fromRoute('idPage', $this->params()->fromQuery('idPage', ''));
 
         $eventDatas = array('idPage' => $idPage);
         $this->getEventManager()->trigger('meliscms_page_save_script_start', null, $eventDatas);
