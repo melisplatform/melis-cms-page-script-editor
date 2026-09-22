@@ -59,7 +59,7 @@ class MelisCmsScriptExceptionTable extends MelisGenericTable
         $select->having->isNotNull('page_name');
     
         if (!is_null($orderColumn)) {            
-            $select->order($orderColumn.' '.$order);   
+            \MelisCore\Model\Tables\MelisGenericTable::addSafeOrder($select, $orderColumn, $order);   
         } else {
             $select->order('mcse_id DESC');
         }
