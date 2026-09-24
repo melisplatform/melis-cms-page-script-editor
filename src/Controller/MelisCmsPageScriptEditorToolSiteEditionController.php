@@ -14,6 +14,14 @@ use MelisCore\Controller\MelisAbstractActionController;
 
 class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractActionController
 {
+    /**
+     * Onglet Scripts de l'outil Sites (audit DEKRA 7.0) : même droit que ses propres sauvegardes et que
+     * son API React (MelisCmsPageScriptEditorReact). MelisCoreAuthorizationListener vérifie canAccess()
+     * sur cette clé AVANT le dispatch. La sauvegarde via le listener du Sites (forward interne) n'est
+     * pas routée, donc pas concernée.
+     */
+    const MELIS_KEY = 'meliscms_tool_sites';
+
     // The form is loaded from the app.tools array
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptToolSiteExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_tool_site_exception_form';
