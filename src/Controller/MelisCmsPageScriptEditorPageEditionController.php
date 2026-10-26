@@ -85,6 +85,17 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
 
         $idPage = $this->params()->fromRoute('idPage', $this->params()->fromQuery('idPage', ''));
 
+        /**
+         * SECURITY (audit PSE-H1) : le droit d'outil ne suffit pas — contrôle de PÉRIMÈTRE par
+         * page (ACL d'arbre, même règle que la sauvegarde de page CMS), sinon un éditeur
+         * restreint à un sous-arbre injecte du JS — exécuté sur l'origine du BO — sur n'importe
+         * quelle page de n'importe quel site. canAccessPage est fail-closed et couvre aussi
+         * l'existence de la page (breadcrumb vide) ; bypass admin inclus.
+         */
+        if (! $this->getServiceManager()->get('MelisCmsRights')->canAccessPage((int) $idPage)) {
+            return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
+        }
+
         $eventDatas = array('idPage' => $idPage);
         $this->getEventManager()->trigger('meliscms_page_save_script_start', null, $eventDatas);
         $scriptSuccess = 1;

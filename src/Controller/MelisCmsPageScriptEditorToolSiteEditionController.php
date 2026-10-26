@@ -94,7 +94,16 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
         }
 
         $siteId = $this->params('siteId');
-            
+
+        /**
+         * SECURITY (audit PSE-H1) : le droit d'outil ne suffit pas — un script de site s'exécute
+         * sur TOUTES les pages du site (origine partagée avec le BO). Périmètre dérivé de l'ACL
+         * d'arbre : accès à la page racine du site requis (fail-closed, bypass admin inclus).
+         */
+        if (! $this->getServiceManager()->get('MelisCmsPageScriptEditorService')->canAccessSiteScripts($siteId)) {
+            return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
+        }
+
         $eventDatas = array('siteId' => $siteId);
         $this->getEventManager()->trigger('meliscms_site_save_script_start', null, $eventDatas);
         $scriptSuccess = 1;
