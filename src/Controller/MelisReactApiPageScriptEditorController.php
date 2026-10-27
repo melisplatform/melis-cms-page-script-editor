@@ -43,6 +43,8 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
         if ($deny = $this->denyUnlessAccess()) { return $deny; }
         try {
             $idPage = (int) $this->params()->fromQuery('idPage', 0);
+            /** SECURITY (audit PSE-H1) : périmètre par page (les scripts peuvent contenir des secrets). */
+            if ($deny = $this->denyUnlessPagePerimeter($idPage)) { return $deny; }
             $db = $this->getServiceManager()->get('Laminas\Db\Adapter\AdapterInterface');
             $rows = iterator_to_array($db->query(
                 'SELECT mcs_head_top, mcs_head_bottom, mcs_body_bottom, mcs_date_edition
@@ -73,6 +75,12 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
             $body = json_decode((string) $this->getRequest()->getContent(), true) ?: [];
             $idPage = (int) ($body['idPage'] ?? 0);
             if ($idPage <= 0) { return $this->json(['success' => false, 'error' => 'idPage requis'], 400); }
+            /**
+             * SECURITY (audit PSE-H1) : le droit d'outil ne suffit pas — contrôle de PÉRIMÈTRE
+             * par page (ACL d'arbre, même règle que la sauvegarde de page CMS). Sans lui, un
+             * éditeur restreint injecte du JS — exécuté sur l'origine du BO — sur toute page.
+             */
+            if ($deny = $this->denyUnlessPagePerimeter($idPage)) { return $deny; }
             $headTop    = (string) ($body['headTop'] ?? '');
             $headBottom = (string) ($body['headBottom'] ?? '');
             $bodyBottom = (string) ($body['bodyBottom'] ?? '');
@@ -91,6 +99,20 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * SECURITY (audit PSE-H1) : contrôle de périmètre par page — MelisCmsRights::canAccessPage
+     * (fail-closed, bypass admin, breadcrumb → couvre l'existence de la page).
+     */
+    private function denyUnlessPagePerimeter(int $idPage): ?HttpResponse
+    {
+        try {
+            if ($this->getServiceManager()->get('MelisCmsRights')->canAccessPage($idPage)) {
+                return null;
+            }
+        } catch (\Throwable) {}
+        return $this->json(['success' => false, 'error' => 'Forbidden'], 403);
     }
 
     private function json(array $data, int $status = 200): HttpResponse

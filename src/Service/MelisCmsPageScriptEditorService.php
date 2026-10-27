@@ -245,18 +245,61 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
 
 
     /**
+     * SECURITY (audit PSE-H1) : contrôle de périmètre pour les écritures de scripts de SITE.
+     * La plateforme n'a pas d'ACL par site ; le périmètre est dérivé de l'allow-list d'arbre
+     * de pages : un script de site s'exécute sur TOUTES les pages du site, il exige donc
+     * l'accès à la page RACINE du site (bypass admin géré dans canAccessPage). Fail-closed.
+     *
+     * @param int $siteId
+     * @return bool
+     */
+    public function canAccessSiteScripts($siteId)
+    {
+        $siteId = (int) $siteId;
+        if ($siteId <= 0) {
+            return false;
+        }
+
+        try {
+            $site = $this->getServiceManager()->get('MelisEngineTableSite')->getEntryById($siteId)->current();
+            if (empty($site) || empty($site->site_main_page_id)) {
+                return false;
+            }
+
+            return (bool) $this->getServiceManager()->get('MelisCmsRights')->canAccessPage((int) $site->site_main_page_id);
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
      * Updates the scripts of the given page
-     * 
+     *
      * @param int $idPage Id of page asked
      * @param string $contentGenerated Content to be changed
      * @return string
      */
     public function updatePageScripts($idPage, $contentGenerated)
     {
+        // PERF (audit PSE-M1) : chaque hit front anonyme payait 4-6 requêtes DB (exception,
+        // site, page, getSiteId) même sans AUCUNE script configurée. Une sonde minimale
+        // court-circuite toute la passe quand melis_cms_scripts est vide — les exceptions ne
+        // font que soustraire, donc table vide = rien à injecter. En cas de doute (erreur),
+        // on garde le comportement historique.
+        try {
+            $db = $this->getServiceManager()->get(\Laminas\Db\Adapter\AdapterInterface::class);
+            $hasScripts = (bool) $db->query('SELECT 1 FROM melis_cms_scripts LIMIT 1', \Laminas\Db\Adapter\Adapter::QUERY_MODE_EXECUTE)->current();
+        } catch (\Throwable $e) {
+            $hasScripts = true;
+        }
+        if (!$hasScripts) {
+            return $contentGenerated;
+        }
+
         $newContent = $contentGenerated;
 
         //get the mixed scripts of the page
-        $scripts = $this->getMixedScriptsPerPage($idPage);               
+        $scripts = $this->getMixedScriptsPerPage($idPage);
                 
         if (!empty($scripts['headTopScript'])) {
             $headRegex = '/(<head\s*>)/';
