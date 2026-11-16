@@ -229,7 +229,7 @@ Routes in **`config/react-api.php`** (merged via `Module::getConfig()`), control
 | Method & URL | Action | Purpose |
 |---|---|---|
 | `GET /melis/react-api/cms-page/scripts?idPage=<id>` | `get` | The page's scripts → `{ idPage, headTop, headBottom, bodyBottom, editDate }` |
-| `POST /melis/react-api/cms-page/scripts/save` | `save` | Save the page's scripts (`{idPage, headTop, headBottom, bodyBottom}`; UPDATE latest `melis_cms_scripts` row for the page, else INSERT) → `{ idPage, editDate }` |
+| `POST /melis/react-api/cms-page/scripts/save` | `save` | Save the page's scripts (`{idPage, headTop, headBottom, bodyBottom}`; UPDATE the page's oldest `melis_cms_scripts` row — the one the front and the Old editor read — else INSERT; the page's extra rows are then deleted, one row per page) → `{ idPage, editDate }` |
 
 Example (from MelisCms `PageTabs.tsx` `ScriptsTab`, `apiGet`/`apiPost` base already `…/cms-page/`):
 ```ts

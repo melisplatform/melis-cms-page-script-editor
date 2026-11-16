@@ -46,9 +46,11 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
             /** SECURITY (audit PSE-H1) : périmètre par page (les scripts peuvent contenir des secrets). */
             if ($deny = $this->denyUnlessPagePerimeter($idPage)) { return $deny; }
             $db = $this->getServiceManager()->get('Laminas\Db\Adapter\AdapterInterface');
+            // The OLDEST row, as the front and the Old editor: the newest one showed edits the front never
+            // had when a page held several rows (Mantis #0011509)
             $rows = iterator_to_array($db->query(
                 'SELECT mcs_head_top, mcs_head_bottom, mcs_body_bottom, mcs_date_edition
-                 FROM melis_cms_scripts WHERE mcs_page_id = ? ORDER BY mcs_id DESC LIMIT 1', [$idPage]));
+                 FROM melis_cms_scripts WHERE mcs_page_id = ? ORDER BY mcs_id ASC LIMIT 1', [$idPage]));
             $r = $rows[0] ?? [];
             return $this->json(['success' => true, 'data' => [
                 'idPage'     => $idPage,
@@ -87,14 +89,18 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
             $userId = (int) ($auth->getIdentity()->usr_id ?? 0);
             $now = date('Y-m-d H:i:s');
             $db = $sm->get('Laminas\Db\Adapter\AdapterInterface');
-            $existing = iterator_to_array($db->query('SELECT mcs_id FROM melis_cms_scripts WHERE mcs_page_id = ? ORDER BY mcs_id DESC LIMIT 1', [$idPage]));
-            if (!empty($existing)) {
+            // The page's row is the one the front reads (the oldest); updating the newest saved edits the
+            // front never showed (Mantis #0011509). The extra rows are then removed: one row per page.
+            $pse = $sm->get('MelisCmsPageScriptEditorService');
+            $existingId = $pse->getPageScriptId($idPage);
+            if ($existingId) {
                 $db->query('UPDATE melis_cms_scripts SET mcs_head_top = ?, mcs_head_bottom = ?, mcs_body_bottom = ?, mcs_date_edition = ?, mcs_user_id = ? WHERE mcs_id = ?',
-                    [$headTop, $headBottom, $bodyBottom, $now, $userId, (int) $existing[0]['mcs_id']]);
+                    [$headTop, $headBottom, $bodyBottom, $now, $userId, $existingId]);
             } else {
                 $db->query('INSERT INTO melis_cms_scripts (mcs_page_id, mcs_head_top, mcs_head_bottom, mcs_body_bottom, mcs_date_edition, mcs_user_id) VALUES (?, ?, ?, ?, ?, ?)',
                     [$idPage, $headTop, $headBottom, $bodyBottom, $now, $userId]);
             }
+            $pse->removeExtraPageScripts($idPage, $pse->getPageScriptId($idPage));
             return $this->json(['success' => true, 'data' => ['idPage' => $idPage, 'editDate' => $now]]);
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'error' => $e->getMessage()], 500);

@@ -55,13 +55,25 @@ class MelisCmsPageScriptEditorSavePageListener extends MelisGeneralListener impl
         $sm = $event->getTarget()->getEvent()->getApplication()->getServiceManager();
         $melisCoreDispatchService = $sm->get('MelisCoreDispatch');
 
+        // The saved page's id, set by MelisCms' save listener (priority 100, before this one): on a page
+        // creation the request still says idPage=0 (Mantis #0011371). The dispatch merges every action's
+        // datas recursively, so idPage may have become a list of the same id.
+        $params = ['action' => 'saveScript'];
+        $savedId = $container['action-page-tmp']['datas']['idPage'] ?? null;
+        if (is_array($savedId)) {
+            $savedId = reset($savedId);
+        }
+        if ((int) $savedId > 0) {
+            $params['idPage'] = (int) $savedId;
+        }
+
         // Save script tab
         list($success, $errors, $datas) = $melisCoreDispatchService->dispatchPluginAction(
             $event,
             'meliscms',
             'action-page-tmp',
             'MelisCmsPageScriptEditor\Controller\MelisCmsPageScriptEditorPageEdition',
-            array_merge(['action' => 'saveScript'], [])
+            $params
         );
 
         if (!$success)

@@ -83,7 +83,17 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
             return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
         }
 
+        // Route param first: on page save the listener passes the saved page's id (the new one on creation)
         $idPage = $this->params()->fromRoute('idPage', $this->params()->fromQuery('idPage', ''));
+
+        // Nothing from the Scripts tab in this request (page creation, which has no Scripts tab): nothing to
+        // save. canAccessPage(0) below failed and the whole page creation answered « La création a échoué »
+        // though the page was created (Mantis #0011371)
+        $posted = $this->getRequest()->isPost() ? $this->getRequest()->getPost()->toArray() : [];
+        $scriptFields = ['mcs_head_top', 'mcs_head_bottom', 'mcs_body_bottom', 'mcse_exclude_site_scripts'];
+        if ((int) $idPage <= 0 || !array_intersect_key($posted, array_flip($scriptFields))) {
+            return new JsonModel(['success' => 1, 'errors' => []]);
+        }
 
         /**
          * SECURITY (audit PSE-H1) : le droit d'outil ne suffit pas — contrôle de PÉRIMÈTRE par
@@ -116,13 +126,24 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
             if ($scriptForm->isValid()) {               
                 $scriptData = $scriptForm->getData();
 
+                // The page's row is resolved here, not taken from the POST: the page edition posts every tab
+                // in one request and the Share tab's own (empty) mcs_id overrode this one, so each Old save
+                // inserted a new row the front never read (Mantis #0011509)
+                $pageScriptEditorService = $this->getServiceManager()->get('MelisCmsPageScriptEditorService');
+                $scriptData['mcs_id'] = $pageScriptEditorService->getPageScriptId($idPage);
+
                 //use helper to add the scripts to DB
                 $viewHelperManager = $this->getServiceManager()->get('ViewHelperManager');
-                $addScriptHelper = $viewHelperManager->get('melisCmsPageScriptEditorAddScript'); 
+                $addScriptHelper = $viewHelperManager->get('melisCmsPageScriptEditorAddScript');
 
                 //set site ID to null
-                $siteId = null;               
-                $scriptSuccess = $addScriptHelper->addScriptData($this->getServiceManager(), $scriptData, $siteId, $idPage);     
+                $siteId = null;
+                $scriptSuccess = $addScriptHelper->addScriptData($this->getServiceManager(), $scriptData, $siteId, $idPage);
+                // One row per page: drop the extra rows earlier saves left (all of them once the fields are emptied)
+                if ($scriptSuccess) {
+                    $hasScripts = !empty($scriptData['mcs_head_top']) || !empty($scriptData['mcs_head_bottom']) || !empty($scriptData['mcs_body_bottom']);
+                    $pageScriptEditorService->removeExtraPageScripts($idPage, $hasScripts ? $pageScriptEditorService->getPageScriptId($idPage) : null);
+                }
 
             } else {
                 $scriptSuccess = 0;

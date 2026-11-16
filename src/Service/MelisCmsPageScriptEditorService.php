@@ -142,6 +142,37 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
     }
 
     /**
+     * The page's script row: its OLDEST row, the one the front (getMixedScriptsPerPage), the Old editor
+     * and page duplication read. A page may hold several rows: the Old editor's save took mcs_id from the
+     * POST, where the Share tab's empty mcs_id overrode it, and inserted a new row each time (Mantis #0011509)
+     * @param int $pageId
+     * @return int|null
+     */
+    public function getPageScriptId($pageId)
+    {
+        $row = $this->getServiceManager()->get('Laminas\Db\Adapter\AdapterInterface')
+            ->query('SELECT MIN(mcs_id) AS id FROM melis_cms_scripts WHERE mcs_page_id = ?', [(int) $pageId])
+            ->current();
+        return !empty($row['id']) ? (int) $row['id'] : null;
+    }
+
+    /**
+     * Removes the page's script rows other than $keepId (all of them when $keepId is null), so a page
+     * keeps a single row and every reader sees the same scripts (Mantis #0011509)
+     * @param int $pageId
+     * @param int|null $keepId
+     */
+    public function removeExtraPageScripts($pageId, $keepId = null)
+    {
+        $db = $this->getServiceManager()->get('Laminas\Db\Adapter\AdapterInterface');
+        if ($keepId) {
+            $db->query('DELETE FROM melis_cms_scripts WHERE mcs_page_id = ? AND mcs_id <> ?', [(int) $pageId, (int) $keepId]);
+        } else {
+            $db->query('DELETE FROM melis_cms_scripts WHERE mcs_page_id = ?', [(int) $pageId]);
+        }
+    }
+
+    /**
      * This method will retrieve the scripts for the given page id
      * @param int|null $pageId
      * @return array
