@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  addException, deleteException, fetchExceptions, fetchSiteScript, saveSiteScript,
+  addException, deleteException, fetchExceptions, fetchSiteScript, filterSitePages, saveSiteScript,
   type ExceptionItem,
 } from './site-scripts-api'
 import { fetchTreeNodes, type MelisTreeNode } from './cms-tree-api'
@@ -153,7 +153,11 @@ export default function ScriptsTab({ siteId, registerSave }: Props) {
 
   async function openTree() {
     setTreeOpen((o) => !o)
-    if (roots === null) setRoots(await fetchTreeNodes(-1))
+    if (roots !== null) return
+    // only the edited site's root pages: an exception must be a page of this site (Mantis #0011510)
+    const all = await fetchTreeNodes(-1)
+    const keep = new Set(await filterSitePages(siteId, all.map((n) => n.key)).catch(() => all.map((n) => n.key)))
+    setRoots(all.filter((n) => keep.has(n.key)))
   }
 
   // Les erreurs de l'API arrivent sous forme de clés tr_… (la brique n'a pas le dico du module) :

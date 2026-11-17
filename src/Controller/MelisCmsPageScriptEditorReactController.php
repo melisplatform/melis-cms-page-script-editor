@@ -158,6 +158,38 @@ class MelisCmsPageScriptEditorReactController extends MelisAbstractActionControl
         }
     }
 
+    // ─── GET /site-pages?siteId=&ids=1,2,3 ──────────────────────────────────
+
+    /**
+     * Keeps, among the given page ids, those that belong to the site — same rule as add-exception
+     * (getSiteId: the page template's site). Used by the exception picker so that it only offers
+     * the edited site's root pages, not every site of the tree (Mantis #0011510).
+     */
+    public function sitePagesAction(): HttpResponse
+    {
+        if ($deny = $this->denyUnlessAccess()) { return $deny; }
+
+        try {
+            $siteId = (int) $this->params()->fromQuery('siteId', 0);
+            if (!$siteId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'siteId is required'], 400);
+            }
+            $ids = array_slice(array_unique(array_filter(array_map('intval', explode(',', (string) $this->params()->fromQuery('ids', ''))))), 0, 500);
+
+            $service = $this->getServiceManager()->get('MelisCmsPageScriptEditorService');
+            $kept = [];
+            foreach ($ids as $id) {
+                if ((int) $service->getSiteId($id) === $siteId) {
+                    $kept[] = $id;
+                }
+            }
+
+            return $this->jsonResponse(['success' => true, 'data' => ['ids' => $kept]]);
+        } catch (\Throwable $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
     // ─── POST /add-exception ─────────────────────────────────────────────────
 
     public function addExceptionAction(): HttpResponse

@@ -12,6 +12,14 @@ export interface MelisTreeNode {
   lazy: boolean
 }
 
+/** HTML entities → text. A <textarea> parses its content as text only: nothing is executed. */
+function decodeEntities(s: string): string {
+  if (!s.includes('&')) return s
+  const ta = document.createElement('textarea')
+  ta.innerHTML = s
+  return ta.value
+}
+
 export async function fetchTreeNodes(nodeId: number): Promise<MelisTreeNode[]> {
   try {
     const res = await fetch(
@@ -26,9 +34,11 @@ export async function fetchTreeNodes(nodeId: number): Promise<MelisTreeNode[]> {
     else if (Array.isArray(data?.tree)) nodes = data.tree as MelisTreeNode[]
     // Le listener de verrou legacy préfixe parfois le titre par une icône <i> HTML : on la retire
     // (React échappe le HTML, il s'afficherait en texte).
+    // Les titres arrivent échappés HTML (« l&#039;été ») : on les décode, React ré-échappe à l'affichage
+    // (Mantis #0011510).
     return nodes.map((n) => ({
       key: n.key,
-      title: typeof n.title === 'string' ? n.title.replace(/^\s*<i\b[^>]*><\/i>\s*/i, '').trim() : n.title,
+      title: typeof n.title === 'string' ? decodeEntities(n.title.replace(/^\s*<i\b[^>]*><\/i>\s*/i, '').trim()) : n.title,
       lazy: !!n.lazy,
     }))
   } catch {

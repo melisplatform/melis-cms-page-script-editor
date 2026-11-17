@@ -47,6 +47,13 @@ export function fetchExceptions(siteId: number): Promise<{ items: ExceptionItem[
   return apiFetch<{ items: ExceptionItem[]; total: number }>(`${BASE}/exceptions?siteId=${siteId}`)
 }
 
+/** Among `ids`, those whose page belongs to the site (same rule as add-exception). */
+export async function filterSitePages(siteId: number, ids: number[]): Promise<number[]> {
+  if (ids.length === 0) return []
+  const r = await apiFetch<{ ids: number[] }>(`${BASE}/site-pages?siteId=${siteId}&ids=${ids.join(',')}`)
+  return r.ids
+}
+
 export function addException(siteId: number, pageId: number): Promise<null> {
   return apiFetch<null>(`${BASE}/add-exception`, {
     method: 'POST',
