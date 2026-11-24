@@ -42,7 +42,7 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
         if ($deny = $this->denyUnlessAccess()) { return $deny; }
         try {
             $idPage = (int) $this->params()->fromQuery('idPage', 0);
-            /** SECURITY (audit PSE-H1) : périmètre par page (les scripts peuvent contenir des secrets). */
+            /** Périmètre par page. */
             if ($deny = $this->denyUnlessPagePerimeter($idPage)) { return $deny; }
             $db = $this->getServiceManager()->get('Laminas\Db\Adapter\AdapterInterface');
             $rows = iterator_to_array($db->query(
@@ -75,9 +75,8 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
             $idPage = (int) ($body['idPage'] ?? 0);
             if ($idPage <= 0) { return $this->json(['success' => false, 'error' => 'idPage requis'], 400); }
             /**
-             * SECURITY (audit PSE-H1) : le droit d'outil ne suffit pas — contrôle de PÉRIMÈTRE
-             * par page (ACL d'arbre, même règle que la sauvegarde de page CMS). Sans lui, un
-             * éditeur restreint injecte du JS — exécuté sur l'origine du BO — sur toute page.
+             * En plus du droit d'outil, contrôle de périmètre par page (ACL d'arbre, même
+             * règle que la sauvegarde de page CMS).
              */
             if ($deny = $this->denyUnlessPagePerimeter($idPage)) { return $deny; }
             $headTop    = (string) ($body['headTop'] ?? '');
@@ -101,8 +100,8 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
     }
 
     /**
-     * SECURITY (audit PSE-H1) : contrôle de périmètre par page — MelisCmsRights::canAccessPage
-     * (fail-closed, bypass admin, breadcrumb → couvre l'existence de la page).
+     * Contrôle de périmètre par page — MelisCmsRights::canAccessPage (breadcrumb → couvre
+     * l'existence de la page).
      */
     private function denyUnlessPagePerimeter(int $idPage): ?HttpResponse
     {

@@ -245,10 +245,9 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
 
 
     /**
-     * SECURITY (audit PSE-H1) : contrôle de périmètre pour les écritures de scripts de SITE.
-     * La plateforme n'a pas d'ACL par site ; le périmètre est dérivé de l'allow-list d'arbre
-     * de pages : un script de site s'exécute sur TOUTES les pages du site, il exige donc
-     * l'accès à la page RACINE du site (bypass admin géré dans canAccessPage). Fail-closed.
+     * Contrôle de périmètre pour les écritures de scripts de SITE, dérivé de l'arbre de
+     * pages : un script de site s'exécute sur toutes les pages du site, il exige donc
+     * l'accès à la page racine du site (cf. canAccessPage).
      *
      * @param int $siteId
      * @return bool
@@ -281,7 +280,7 @@ class MelisCmsPageScriptEditorService extends MelisGeneralService
      */
     public function updatePageScripts($idPage, $contentGenerated)
     {
-        // PERF (audit PSE-M1) : chaque hit front anonyme payait 4-6 requêtes DB (exception,
+        // Perf : chaque hit front anonyme payait 4-6 requêtes DB (exception,
         // site, page, getSiteId) même sans AUCUNE script configurée. Une sonde minimale
         // court-circuite toute la passe quand melis_cms_scripts est vide — les exceptions ne
         // font que soustraire, donc table vide = rien à injecter. En cas de doute (erreur),

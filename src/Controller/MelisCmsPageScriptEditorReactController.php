@@ -83,9 +83,8 @@ class MelisCmsPageScriptEditorReactController extends MelisAbstractActionControl
             $service = $this->getServiceManager()->get('MelisCmsPageScriptEditorService');
 
             /**
-             * SECURITY (audit PSE-H1) : le droit d'outil ne suffit pas — un script de site
-             * s'exécute sur TOUTES les pages du site (origine partagée avec le BO). Périmètre
-             * dérivé de l'ACL d'arbre : accès à la page racine du site requis (fail-closed).
+             * Un script de site s'exécute sur toutes les pages du site : en plus du droit
+             * d'outil, accès à la page racine du site requis (ACL d'arbre).
              */
             if (! $service->canAccessSiteScripts($siteId)) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Forbidden'], 403);
