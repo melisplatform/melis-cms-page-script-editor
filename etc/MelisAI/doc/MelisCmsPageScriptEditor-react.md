@@ -239,10 +239,9 @@ await apiGet<Scripts>(`scripts?idPage=${idPage}`)          // → { headTop, hea
 await apiPost('scripts/save', { idPage, headTop, headBottom, bodyBottom })
 ```
 
-> **Security note.** These endpoints inject custom `<script>`/HTML into the **public** front rendering
+> **Note.** These endpoints add custom `<script>`/HTML to the **public** front rendering
 > of a page, so `get`/`save` require the **page-script-editor tool right** (`meliscms_page_script_editor`),
-> not merely a session — a hardening fix so no zero-rights BO user could plant persistent XSS. The
-> writes use parameterised SQL directly on `melis_cms_scripts`.
+> not merely a session. The writes use parameterised SQL directly on `melis_cms_scripts`.
 
 ### B3.2 Site-tab endpoints — `MelisCmsPageScriptEditorReactController`
 
