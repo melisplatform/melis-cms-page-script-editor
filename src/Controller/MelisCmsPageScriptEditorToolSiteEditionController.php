@@ -15,7 +15,7 @@ use MelisCore\Controller\MelisAbstractActionController;
 class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractActionController
 {
     /**
-     * Onglet Scripts de l'outil Sites (audit DEKRA 7.0) : même droit que ses propres sauvegardes et que
+     * Onglet Scripts de l'outil Sites : même droit que ses propres sauvegardes et que
      * son API React (MelisCmsPageScriptEditorReact). MelisCoreAuthorizationListener vérifie canAccess()
      * sur cette clé AVANT le dispatch. La sauvegarde via le listener du Sites (forward interne) n'est
      * pas routée, donc pas concernée.
@@ -26,7 +26,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptToolSiteExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_tool_site_exception_form';
 
-    /** @INFO: Tool access check (CWE-862). */
+    /** @INFO: Tool access check. */
     private function hasAccess($key)
     {
         return $this->getServiceManager()->get('MelisCoreRights')->canAccess($key);
@@ -88,7 +88,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     */
     public function saveSiteScriptAction()
     {
-        /** @INFO: Access check (tool right) — CWE-862 */
+        /** @INFO: Access check (tool right) */
         if (! $this->hasAccess('meliscms_tool_sites')) {
             return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
         }
@@ -314,7 +314,7 @@ class MelisCmsPageScriptEditorToolSiteEditionController extends MelisAbstractAct
     */
     public function saveSiteScriptExceptionAction()
     {
-        /** @INFO: Access check (tool right) — CWE-862 */
+        /** @INFO: Access check (tool right) */
         if (! $this->hasAccess('meliscms_tool_sites')) {
             return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
         }
