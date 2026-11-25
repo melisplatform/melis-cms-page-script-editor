@@ -19,7 +19,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
     const PageScriptAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_form';
     const PageScriptExceptionAppConfigPath = '/meliscmspagescripteditor/forms/meliscmspagescripteditor_script_exception_form';
 
-    /** @INFO: Tool access check (CWE-862). */
+    /** @INFO: Tool access check. */
     private function hasAccess($key)
     {
         return $this->getServiceManager()->get('MelisCoreRights')->canAccess($key);
@@ -78,7 +78,7 @@ class MelisCmsPageScriptEditorPageEditionController extends MelisAbstractActionC
     */
     public function saveScriptAction()
     {
-        /** @INFO: Access check (tool right) — CWE-862 */
+        /** @INFO: Access check (tool right) */
         if (! $this->hasAccess('meliscms_page')) {
             return new JsonModel(['success' => 0, 'textTitle' => '', 'textMessage' => 'tr_meliscore_microservice_api_key_no_access', 'errors' => [], 'datas' => []]);
         }

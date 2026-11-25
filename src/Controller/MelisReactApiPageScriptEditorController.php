@@ -15,14 +15,13 @@ class MelisReactApiPageScriptEditorController extends MelisAbstractActionControl
     /**
      * Same right as the legacy Scripts tab (MelisCmsPageScriptEditorPageEdition::saveScript): page
      * edition. The former key (meliscms_page_script_editor) cannot be ticked in Users → Rights, so
-     * every non-admin was refused. Also read by the authorization gate (audit DEKRA 7.0).
+     * every non-admin was refused. Also read by the authorization gate.
      */
     private const MELIS_KEY = 'meliscms_page';
 
     /**
-     * These endpoints inject custom <script>/HTML into the PUBLIC front rendering of a page, so they
-     * must require the page-edition right — not merely a session. Previously any
-     * authenticated BO user (even with zero CMS rights) could plant persistent XSS on any page.
+     * These endpoints add custom <script>/HTML to the PUBLIC front rendering of a page, so they
+     * require the page-edition right — not merely a session.
      */
     private function denyUnlessAccess(): ?HttpResponse
     {
